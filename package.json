@@ -7,8 +7,13 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "electron .",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "tauri:build:win": "tauri build --target x86_64-pc-windows-msvc --bundles nsis",
     "test": "node --test tests/*.test.js",
     "test:e2e": "playwright test",
+    "test:rust": "cd src-tauri && cargo test",
     "dist:win": "electron-builder --win nsis portable --x64",
     "dist:win:portable": "electron-builder --win portable --x64"
   },
