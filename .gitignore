@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/Release/
+src-tauri/target/
+src-tauri/gen/
+*.log
+.DS_Store
+.vscode/
+.idea/
+test-results/
+playwright-report/
