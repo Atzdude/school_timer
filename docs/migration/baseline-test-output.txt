@@ -1,0 +1,435 @@
+
+> timer@1.3.0 test
+> node --test tests/*.test.js
+
+✔ Electron package keeps the app identity as timer (0.574625ms)
+✔ main process sets a stable window title and handles renderer load failures (0.174542ms)
+✔ HTML inline script loads and exposes timer test hooks (8.358542ms)
+✔ two-part colon durations are parsed as hours and minutes (1.864125ms)
+✔ created timers receive unique IDs even within the same millisecond (2.303584ms)
+✔ timer edit mode removes fixed card height so controls remain reachable (1.451834ms)
+✔ presentation mode does not hide the done shelf (0.477833ms)
+✔ presentation mode hides all global action buttons for hall projection (0.707958ms)
+✔ header layout keeps long titles out of the live clock (0.728458ms)
+✖ 1280 by 800 layout avoids fixed overlays and clipped projector content (2.126042ms)
+✔ presentation mode gives title room by moving clock right and using icon-only controls (0.707417ms)
+✔ distance palette keeps white text above WCAG contrast threshold (0.215417ms)
+✔ static scan confirms session import and export features stay absent (0.817125ms)
+✔ running timer persists an absolute deadline and a remaining-time snapshot (2.033125ms)
+✔ tick recalculates from wall-clock deadline instead of subtracting one second (1.786583ms)
+✔ display loop pauses running timer on unsafe forward clock jump before completion (1.937083ms)
+✔ pause snapshots remaining time and clears the deadline (1.627916ms)
+✔ startup resumes a running timer when the saved clock looks sane (3.607583ms)
+✔ startup marks an expired sane deadline as completed (4.107875ms)
+✔ startup falls back to paused remaining time when the clock moved backwards (1.539333ms)
+✔ startup falls back to paused remaining time after more than 24 hours elapsed (2.3915ms)
+✔ reset clears completion and restores original duration (1.518334ms)
+✔ Keep Done leaves completed timers flashing for seven seconds before shelving (1.450625ms)
+✔ R shortcut starts reading time without resetting timers (2.376709ms)
+✔ P shortcut keeps presentation button active state in sync (1.867166ms)
+✔ presentation mode requests and exits fullscreen without wake-lock behavior (1.120125ms)
+✖ Ctrl plus and minus zoom the timer display and persist the preference (1.351375ms)
+✖ Ctrl wheel zooms single timers and updates card breakpoints (4.210875ms)
+✖ Ctrl zero resets timer zoom (2.109583ms)
+✖ visible size preset control applies hall and classroom timer sizing (3.059125ms)
+✔ control lock hides and blocks editing controls while leaving timers intact (2.860292ms)
+✔ individual delete is confirm-gated and immediately undoable (2.167166ms)
+✔ updating a running timer requires confirmation before duration reset (11.338916ms)
+✔ bulk add creates multiple timers from pasted names and durations (2.325875ms)
+✔ reading time duration preset starts the selected duration (2.631375ms)
+✖ projector calibration overlay opens and closes without touching timers (1.377542ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 30
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 171.060916
+
+✖ failing tests:
+
+test at tests/timer_deadline.test.js:609:1
+✖ 1280 by 800 layout avoids fixed overlays and clipped projector content (2.126042ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /body\.presentation-mode \.timer-body \{[\s\S]*?min-height:\s*0/. Input:
+  
+  '<!DOCTYPE html>\n' +
+    '<html lang="en">\n' +
+    '<head>\n' +
+    '    <meta charset="UTF-8">\n' +
+    '    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+    `    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline'; connect-src 'self';">\n` +
+    '    <title>Timer</title>\n' +
+    '    <style>\n' +
+    '        /* ==================== LOCAL FONTS (offline-safe) ==================== */\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Playfair Display';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 500 700;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/playfair-display-latin-ext.woff2') format('woff2');\n" +
+    '            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Playfair Display';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 500 700;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/playfair-display-latin.woff2') format('woff2');\n" +
+    '            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Source Sans Pro';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 400;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/source-sans-pro-400-latin-ext.woff2') format('woff2');\n" +
+    '            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Source Sans Pro';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 400;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/source-sans-pro-400-latin.woff2') format('woff2');\n" +
+    '            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Source Sans Pro';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 600;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/source-sans-pro-600-latin-ext.woff2') format('woff2');\n" +
+    '            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Source Sans Pro';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 600;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/source-sans-pro-600-latin.woff2') format('woff2');\n" +
+    '            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Source Sans Pro';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 700;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/source-sans-pro-700-latin-ext.woff2') format('woff2');\n" +
+    '            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n' +
+    '        }\n' +
+    '        @font-face {\n' +
+    "            font-family: 'Source Sans Pro';\n" +
+    '            font-style: normal;\n' +
+    '            font-weight: 700;\n' +
+    '            font-display: swap;\n' +
+    "            src: url('fonts/source-sans-pro-700-latin.woff2') format('woff2');\n" +
+    '            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n' +
+    '        }\n' +
+    '\n' +
+    '        :root {\n' +
+    '            --navy-primary: #1B254B;\n' +
+    '            --burgundy-accent: #7F0000;\n' +
+    '            --golden-yellow: #FDC800;\n' +
+    '            --light-blue-bg: #F0F6FE;\n' +
+    '            --dark-navy: #030D35;\n' +
+    '            --white: #FFFFFF;\n' +
+    '            --light-gray: #E8EDF5;\n' +
+    '            --muted-text: #54595F;\n' +
+    '\n' +
+    '            --timer-green: #00C853;\n' +
+    '            --timer-green-bg: #E8F5E9;\n' +
+    '            --timer-orange: #C2410C;\n' +
+    '            --timer-orange-bg: #FFF3E8;\n' +
+    '            --timer-warning: #007A3D;\n' +
+    '            --timer-ended: #C2410C;\n' +
+    '            --undo-blue: #174EA6;\n' +
+    '            --lock-blue: #005B66;\n' +
+    '\n' +
+    '            /* Palette colors */\n' +
+    '            --color-navy: #1B254B;\n' +
+    '            --color-burgundy: #9F1239;\n' +
+    '            --color-forest: #006B3C;\n' +
+    '            --color-royal: #174EA6;\n' +
+    '            --color-slate: #5B21B6;\n' +
+    '            --color-teal: #005B66;\n' +
+    '\n' +
+    '            --transition-micro: 200ms ease;\n' +
+    '\n' +
+    '            /* Layout-scale variables controlled by the zoom buttons.\n' +
+    '               They change card density first, not the timer value itself. */\n' +
+    '            --timer-layout-scale: 1;\n' +
+    '            --timer-grid-gap: 16px;\n' +
+    '            --timer-card-min-width: 440px;\n' +
+    '            --timer-card-min-height: 280px;\n' +
+    '            --timer-display-min-height: 220px;\n' +
+    '            --timer-header-padding-y: 12px;\n' +
+    '            --timer-header-padding-x: 16px;\n' +
+    '            --timer-title-size: clamp(1.4rem, 1.2rem + 1.5vw, 2.2rem);\n' +
+    '            --timer-title-padding-y: 4px;\n' +
+    '            --timer-title-padding-x: 8px;\n' +
+    '            --single-timer-min-height: min(68vh, 620px);\n' +
+    '        }\n' +
+    '\n' +
+    '        * {\n' +
+    '            margin: 0;\n' +
+    '            padding: 0;\n' +
+    '            box-sizing: border-box;\n' +
+    '        }\n' +
+    '\n' +
+    '        html,\n' +
+    '        body {\n' +
+    '            height: 100%;\n' +
+    '        }\n' +
+    '\n' +
+    '        body {\n' +
+    "            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;\n" +
+    '            background: linear-gradient(135deg, var(--light-blue-bg) 0%, var(--white) 50%, var(--light-blue-bg) 100%);\n' +
+    '            color: var(--navy-primary);\n' +
+    '            display: flex;\n' +
+    '            flex-direction: column;\n' +
+    '            overflow: hidden;\n' +
+    '        }\n' +
+    '\n' +
+    '        .container {\n' +
+    '            width: 100%;\n' +
+    '            max-width: 1400px;\n' +
+    '            margin: 0 auto;\n' +
+    '            padding: 20px 24px;\n' +
+    '            flex: 1;\n' +
+    '            min-height: 0;\n' +
+    '            overflow-y: auto;\n' +
+    '        }\n' +
+    '\n' +
+    '        .storage-status:not([hidden]) {\n' +
+    '            display: flex;\n' +
+    '            align-items: flex-start;\n' +
+    '            gap: 12px;\n' +
+    '        }\n' +
+    '\n' +
+    '        .storage-status {\n' +
+    '            margin: 20px 0 0;\n' +
+    '            padding: 12px 16px;\n' +
+    '            border-radius: 8px;\n' +
+    '            border: 2px solid #E0A800;\n' +
+    '            background: #FFF8E1;\n' +
+    '            color: #5D4037;\n' +
+    '            font-weight: 600;\n' +
+    '            line-height: 1.45;\n' +
+    '        }\n' +
+    '\n' +
+    '        .storage-status.error {\n' +
+    '            border-color: var(--timer-orange);\n' +
+    '            background: var(--timer-orange-bg);\n' +
+    '            color: #7C2D12;\n' +
+    '        }\n' +
+    '\n' +
+    '        .status-message { flex: 1; }\n' +
+    '\n' +
+    '        .status-close {\n' +
+    '            flex-shrink: 0;\n' +
+    '            background: none;\n' +
+    '            border: none;\n' +
+    '            color: inherit;\n' +
+    '            cursor: pointer;\n' +
+    '            font-size: 1.25rem;\n' +
+    '            line-height: 1;\n' +
+    '            padding: 0 2px;\n' +
+    '            opacity: 0.55;\n' +
+    '            transition: opacity 150ms ease;\n' +
+    '        }\n' +
+    '\n' +
+    '        .status-close:hover { opacity: 1; }\n' +
+    '\n' +
+    '        /* ==================== HEADER ==================== */\n' +
+    '        header {\n' +
+    '            display: grid;\n' +
+    '            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);\n' +
+    '            align-items: center;\n' +
+    '            padding: 14px 24px;\n' +
+    '            background: linear-gradient(135deg, var(--navy-primary) 0%, var(--dark-navy) 100%);\n' +
+    '            border-bottom: 4px solid var(--golden-yellow);\n' +
+    '            position: relative;\n' +
+    '            gap: clamp(12px, 1.8vw, 28px);\n' +
+    '            flex-shrink: 0;\n' +
+    '            overflow: visible;\n' +
+    '        }\n' +
+    '\n' +
+    '        .header-left {\n' +
+    '            display: flex;\n' +
+    '            align-items: center;\n' +
+    '            gap: 16px;\n' +
+    '            min-width: 0;\n' +
+    '        }\n' +
+    '\n' +
+    '        .logo {\n' +
+    '            width: 70px;\n' +
+    '            height: auto;\n' +
+    '            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));\n' +
+    '        }\n' +
+    '\n' +
+    '        /* logo-fallback removed — img just hides on error */\n' +
+    '\n' +
+    '        .header-title-section {\n' +
+    '            display: flex;\n' +
+    '            flex-direction: column;\n' +
+    '            gap: 4px;\n' +
+    '            min-width: 0;\n' +
+    '        }\n' +
+    '\n' +
+    '        .main-title {\n' +
+    "            font-family: 'Playfair Display', Georgia, serif;\n" +
+    '            font-size: 2.65rem;\n' +
+    '            font-weight: 700;\n' +
+    '            color: var(--white);\n' +
+    '            cursor: pointer;\n' +
+    '            padding: 4px 12px;\n' +
+    '            border-radius: 4px;\n' +
+    '            transition: all var(--transition-micro);\n' +
+    '            border: 2px solid transparent;\n' +
+    '            background: transparent;\n' +
+    '            letter-spacing: 0.5px;\n' +
+    '            display: block;\n' +
+    '            max-width: 100%;\n' +
+    '            line-height: 1.05;\n' +
+    '            overflow: hidden;\n' +
+    '            overflow-y: auto;\n' +
+    '            max-height: calc(4lh + 12px);\n' +
+    '            overflow-wrap: anywhere;\n' +
+    '            white-space: normal;\n' +
+    '            scrollbar-width: thin;\n' +
+    '            scrollbar-color: rgba(255,255,255,0.45) transparent;\n' +
+    '        }\n' +
+    '\n' +
+    '        .main-title::-webkit-scrollbar { width: 6px; }\n' +
+    '        .main-title::-webkit-scrollbar-track { background: transparent; }\n' +
+    '        .main-title::-webkit-scrollbar-thumb {\n' +
+    '            background: rgba(255,255,255,0.4);\n' +
+    '            border-radius: 999px;\n' +
+    '        }\n' +
+    '\n' +
+    '        .main-title:hover {\n' +
+    '            background: rgba(255,255,255,0.1);\n' +
+    '            border-color: rgba(253, 200, 0, 0.3);\n' +
+    '        }\n' +
+    '\n' +
+    '        .main-title-input {\n' +
+    "            font-family: 'Playfair Display', Georgia, serif;\n" +
+    '            font-size: 2rem;\n' +
+    '            font-weight: 700;\n' +
+    '            color: var(--white);\n' +
+    '            background: rgba(255,255,255,0.15);\n' +
+    '       '... 183829 more characters
+  
+      at TestContext.<anonymous> (/Users/robertrweyemamu/timer/tests/timer_deadline.test.js:618:10)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: `<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline'; connect-src 'self';">\n    <title>Timer</title>\n    <style>\n        /* ==================== LOCAL FONTS (offline-safe) ==================== */\n        @font-face {\n            font-family: 'Playfair Display';\n            font-style: normal;\n            font-weight: 500 700;\n            font-display: swap;\n            src: url('fonts/playfair-display-latin-ext.woff2') format('woff2');\n            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n        }\n        @font-face {\n            font-family: 'Playfair Display';\n            font-style: normal;\n            font-weight: 500 700;\n            font-display: swap;\n            src: url('fonts/playfair-display-latin.woff2') format('woff2');\n            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n        }\n        @font-face {\n            font-family: 'Source Sans Pro';\n            font-style: normal;\n            font-weight: 400;\n            font-display: swap;\n            src: url('fonts/source-sans-pro-400-latin-ext.woff2') format('woff2');\n            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n        }\n        @font-face {\n            font-family: 'Source Sans Pro';\n            font-style: normal;\n            font-weight: 400;\n            font-display: swap;\n            src: url('fonts/source-sans-pro-400-latin.woff2') format('woff2');\n            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n        }\n        @font-face {\n            font-family: 'Source Sans Pro';\n            font-style: normal;\n            font-weight: 600;\n            font-display: swap;\n            src: url('fonts/source-sans-pro-600-latin-ext.woff2') format('woff2');\n            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n        }\n        @font-face {\n            font-family: 'Source Sans Pro';\n            font-style: normal;\n            font-weight: 600;\n            font-display: swap;\n            src: url('fonts/source-sans-pro-600-latin.woff2') format('woff2');\n            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n        }\n        @font-face {\n            font-family: 'Source Sans Pro';\n            font-style: normal;\n            font-weight: 700;\n            font-display: swap;\n            src: url('fonts/source-sans-pro-700-latin-ext.woff2') format('woff2');\n            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;\n        }\n        @font-face {\n            font-family: 'Source Sans Pro';\n            font-style: normal;\n            font-weight: 700;\n            font-display: swap;\n            src: url('fonts/source-sans-pro-700-latin.woff2') format('woff2');\n            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;\n        }\n\n        :root {\n            --navy-primary: #1B254B;\n            --burgundy-accent: #7F0000;\n            --golden-yellow: #FDC800;\n            --light-blue-bg: #F0F6FE;\n            --dark-navy: #030D35;\n            --white: #FFFFFF;\n            --light-gray: #E8EDF5;\n            --muted-text: #54595F;\n\n            --timer-green: #00C853;\n            --timer-green-bg: #E8F5E9;\n            --timer-orange: #C2410C;\n            --timer-orange-bg: #FFF3E8;\n            --timer-warning: #007A3D;\n            --timer-ended: #C2410C;\n            --undo-blue: #174EA6;\n            --lock-blue: #005B66;\n\n            /* Palette colors */\n            --color-navy: #1B254B;\n            --color-burgundy: #9F1239;\n            --color-forest: #006B3C;\n            --color-royal: #174EA6;\n            --color-slate: #5B21B6;\n            --color-teal: #005B66;\n\n            --transition-micro: 200ms ease;\n\n            /* Layout-scale variables controlled by the zoom buttons.\n               They change card density first, not the timer value itself. */\n            --timer-layout-scale: 1;\n            --timer-grid-gap: 16px;\n            --timer-card-min-width: 440px;\n            --timer-card-min-height: 280px;\n            --timer-display-min-height: 220px;\n            --timer-header-padding-y: 12px;\n            --timer-header-padding-x: 16px;\n            --timer-title-size: clamp(1.4rem, 1.2rem + 1.5vw, 2.2rem);\n            --timer-title-padding-y: 4px;\n            --timer-title-padding-x: 8px;\n            --single-timer-min-height: min(68vh, 620px);\n        }\n\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n\n        html,\n        body {\n            height: 100%;\n        }\n\n        body {\n            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;\n            background: linear-gradient(135deg, var(--light-blue-bg) 0%, var(--white) 50%, var(--light-blue-bg) 100%);\n            color: var(--navy-primary);\n            display: flex;\n            flex-direction: column;\n            overflow: hidden;\n        }\n\n        .container {\n            width: 100%;\n            max-width: 1400px;\n            margin: 0 auto;\n            padding: 20px 24px;\n            flex: 1;\n            min-height: 0;\n            overflow-y: auto;\n        }\n\n        .storage-status:not([hidden]) {\n            display: flex;\n            align-items: flex-start;\n            gap: 12px;\n        }\n\n        .storage-status {\n            margin: 20px 0 0;\n            padding: 12px 16px;\n            border-radius: 8px;\n            border: 2px solid #E0A800;\n            background: #FFF8E1;\n            color: #5D4037;\n            font-weight: 600;\n            line-height: 1.45;\n        }\n\n        .storage-status.error {\n            border-color: var(--timer-orange);\n            background: var(--timer-orange-bg);\n            color: #7C2D12;\n        }\n\n        .status-message { flex: 1; }\n\n        .status-close {\n            flex-shrink: 0;\n            background: none;\n            border: none;\n            color: inherit;\n            cursor: pointer;\n            font-size: 1.25rem;\n            line-height: 1;\n            padding: 0 2px;\n            opacity: 0.55;\n            transition: opacity 150ms ease;\n        }\n\n        .status-close:hover { opacity: 1; }\n\n        /* ==================== HEADER ==================== */\n        header {\n            display: grid;\n            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);\n            align-items: center;\n            padding: 14px 24px;\n            background: linear-gradient(135deg, var(--navy-primary) 0%, var(--dark-navy) 100%);\n            border-bottom: 4px solid var(--golden-yellow);\n            position: relative;\n            gap: clamp(12px, 1.8vw, 28px);\n            flex-shrink: 0;\n            overflow: visible;\n        }\n\n        .header-left {\n            display: flex;\n            align-items: center;\n            gap: 16px;\n            min-width: 0;\n        }\n\n        .logo {\n            width: 70px;\n            height: auto;\n            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));\n        }\n\n        /* logo-fallback removed — img just hides on error */\n\n        .header-title-section {\n            display: flex;\n            flex-direction: column;\n            gap: 4px;\n            min-width: 0;\n        }\n\n        .main-title {\n            font-family: 'Playfair Display', Georgia, serif;\n            font-size: 2.65rem;\n            font-weight: 700;\n            color: var(--white);\n            cursor: pointer;\n            padding: 4px 12px;\n            border-radius: 4px;\n            transition: all var(--transition-micro);\n            border: 2px solid transparent;\n            background: transparent;\n            letter-spacing: 0.5px;\n            display: block;\n            max-width: 100%;\n            line-height: 1.05;\n            overflow: hidden;\n            overflow-y: auto;\n            max-height: calc(4lh + 12px);\n            overflow-wrap: anywhere;\n            white-space: normal;\n            scrollbar-width: thin;\n            scrollbar-color: rgba(255,255,255,0.45) transparent;\n        }\n\n        .main-title::-webkit-scrollbar { width: 6px; }\n        .main-title::-webkit-scrollbar-track { background: transparent; }\n        .main-title::-webkit-scrollbar-thumb {\n            background: rgba(255,255,255,0.4);\n            border-radius: 999px;\n        }\n\n        .main-title:hover {\n            background: rgba(255,255,255,0.1);\n            border-color: rgba(253, 200, 0, 0.3);\n        }\n\n        .main-title-input {\n            font-family: 'Playfair Display', Georgia, serif;\n            font-size: 2rem;\n            font-weight: 700;\n            color: var(--white);\n            background: rgba(255,255,255,0.15);\n       `... 183829 more characters,
+    expected: /body\.presentation-mode \.timer-body \{[\s\S]*?min-height:\s*0/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/timer_deadline.test.js:918:1
+✖ Ctrl plus and minus zoom the timer display and persist the preference (1.351375ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /4\.0?rem|3\.99rem/. Input:
+  
+  'clamp(4rem, 17cqw, 14rem)'
+  
+      at TestContext.<anonymous> (/Users/robertrweyemamu/timer/tests/timer_deadline.test.js:935:10)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'clamp(4rem, 17cqw, 14rem)',
+    expected: /4\.0?rem|3\.99rem/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/timer_deadline.test.js:948:1
+✖ Ctrl wheel zooms single timers and updates card breakpoints (4.210875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'min(100%, 1064px)'
+  - 'min(100%, 1045px)'
+                 ^
+  
+      at TestContext.<anonymous> (/Users/robertrweyemamu/timer/tests/timer_deadline.test.js:965:10)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'min(100%, 1064px)',
+    expected: 'min(100%, 1045px)',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/timer_deadline.test.js:969:1
+✖ Ctrl zero resets timer zoom (2.109583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0.95 !== 1
+  
+      at TestContext.<anonymous> (/Users/robertrweyemamu/timer/tests/timer_deadline.test.js:981:10)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0.95,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/timer_deadline.test.js:985:1
+✖ visible size preset control applies hall and classroom timer sizing (3.059125ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1.12 !== 1.2
+  
+      at TestContext.<anonymous> (/Users/robertrweyemamu/timer/tests/timer_deadline.test.js:994:10)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1.12,
+    expected: 1.2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/timer_deadline.test.js:1078:1
+✖ projector calibration overlay opens and closes without touching timers (1.377542ms)
+  TypeError: Cannot read properties of undefined (reading '0')
+      at TestContext.<anonymous> (/Users/robertrweyemamu/timer/tests/timer_deadline.test.js:1083:73)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7)

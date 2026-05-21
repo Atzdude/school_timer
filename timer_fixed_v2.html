@@ -2273,6 +2273,9 @@
                 <button class="zoom-btn reset" id="zoomResetBtn" title="Reset layout density">100%</button>
                 <button class="zoom-btn" id="zoomInBtn" title="Make timer cards larger">Large</button>
             </div>
+            <button class="shortcuts-btn" id="exportDataBtn" title="Export all data as JSON" style="width:auto;padding:0 10px;font-size:0.78rem;">Export</button>
+            <button class="shortcuts-btn" id="importDataBtn" title="Import data from JSON" style="width:auto;padding:0 10px;font-size:0.78rem;">Import</button>
+            <input type="file" id="importDataFile" accept="application/json" hidden>
             <button class="shortcuts-btn" id="shortcutsBtn" title="Help &amp; Guide (?)">?</button>
         </div>
     </header>
@@ -2974,6 +2977,36 @@
                 return null;
             }
         };
+
+        function exportAllData() {
+            const data = {};
+            for (const key of Object.values(STORAGE_KEYS)) {
+                const value = persistentStore.get(key, null);
+                if (value !== null) data[key] = value;
+            }
+            return JSON.stringify({
+                schema: 'naisula-timer-v1',
+                exportedAt: Date.now(),
+                data
+            }, null, 2);
+        }
+
+        function importAllData(jsonText) {
+            let parsed;
+            try { parsed = JSON.parse(jsonText); }
+            catch (e) { return { ok: false, error: 'File is not valid JSON.' }; }
+            if (!parsed || parsed.schema !== 'naisula-timer-v1') {
+                return { ok: false, error: 'Unrecognised schema. Expected naisula-timer-v1.' };
+            }
+            const data = parsed.data || {};
+            for (const [key, value] of Object.entries(data)) {
+                if (!Object.values(STORAGE_KEYS).includes(key)) continue;
+                persistentStore.set(key, value);
+            }
+            if (typeof loadSavedTimers === 'function') loadSavedTimers();
+            if (typeof loadMainTitle === 'function') loadMainTitle();
+            return { ok: true };
+        }
 
         function loadCustomDurations() {
             return persistentStore.get(STORAGE_KEYS.durations, [...defaultDurations]);
@@ -4676,6 +4709,35 @@
             persistentStore.set(STORAGE_KEYS.keepDone, keepCompleted);
             keepDoneBtn.classList.toggle('active', keepCompleted);
             keepDoneBtn.setAttribute('aria-pressed', String(keepCompleted));
+        });
+
+        // ==================== EXPORT / IMPORT ====================
+        document.getElementById('exportDataBtn').addEventListener('click', () => {
+            const blob = new Blob([exportAllData()], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            a.download = `naisula-timer-backup-${stamp}.json`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+        });
+
+        document.getElementById('importDataBtn').addEventListener('click', () => {
+            document.getElementById('importDataFile').click();
+        });
+
+        document.getElementById('importDataFile').addEventListener('change', (event) => {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = importAllData(String(reader.result || ''));
+                if (result.ok) showAlert('Import complete. Your data has been restored.');
+                else showAlert('Import failed: ' + result.error);
+                event.target.value = '';
+            };
+            reader.readAsText(file);
         });
 
         // ==================== KEYBOARD SHORTCUTS ====================

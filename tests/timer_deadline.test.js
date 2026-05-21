@@ -485,7 +485,9 @@ function createHarness({ now = 1_000_000, storage = {} } = {}) {
       getTimerZoom: () => timerZoom,
       getTimerSizePreset: () => timerSizePreset,
       getTimers: () => timers,
-      setTimers: (nextTimers) => { timers = nextTimers; }
+      setTimers: (nextTimers) => { timers = nextTimers; },
+      exportAllData,
+      importAllData
     };
   `;
 
@@ -1086,4 +1088,47 @@ test('projector calibration overlay opens and closes without touching timers', (
 
   harness.document.getElementById('calibrationClose').eventListeners.click[0]();
   assert.equal(overlay.classList.contains('active'), false);
+});
+
+test('export collects all naisula_* keys into a single JSON blob', () => {
+  const harness = createHarness({ now: 100_000 });
+  harness.api.createTimer('Math', 3600, 201, false, 'navy');
+  harness.api.persistentStore.set(harness.api.STORAGE_KEYS.title, 'Hall A');
+  harness.api.persistentStore.set(harness.api.STORAGE_KEYS.durations, [{ label: 'IB P2', minutes: 105 }]);
+
+  const blob = JSON.parse(harness.api.exportAllData());
+
+  assert.equal(blob.schema, 'naisula-timer-v1');
+  assert.equal(blob.data[harness.api.STORAGE_KEYS.title], 'Hall A');
+  assert.equal(blob.data[harness.api.STORAGE_KEYS.durations][0].label, 'IB P2');
+  assert.ok(Array.isArray(blob.data[harness.api.STORAGE_KEYS.timers]));
+});
+
+test('import replaces all naisula_* keys and reloads timers', () => {
+  const harness = createHarness({ now: 200_000 });
+  const blob = JSON.stringify({
+    schema: 'naisula-timer-v1',
+    exportedAt: 200_000,
+    data: {
+      naisula_exam_title: 'Imported Hall',
+      naisula_exam_durations: [{ label: 'AS P1', minutes: 75 }],
+      naisula_exam_timers: [{
+        id: 999, name: 'Imported Paper', duration: 600, remainingTime: 600,
+        endTime: null, savedAt: 200_000, isRunning: false, completed: false, color: 'royal'
+      }]
+    }
+  });
+
+  const result = harness.api.importAllData(blob);
+
+  assert.equal(result.ok, true);
+  assert.equal(harness.api.persistentStore.get('naisula_exam_title', null), 'Imported Hall');
+  assert.equal(harness.api.getTimers()[0].name, 'Imported Paper');
+});
+
+test('import rejects unknown schema versions', () => {
+  const harness = createHarness();
+  const result = harness.api.importAllData(JSON.stringify({ schema: 'something-else', data: {} }));
+  assert.equal(result.ok, false);
+  assert.match(result.error, /schema/i);
 });
