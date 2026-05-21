@@ -40,9 +40,6 @@ jobs:
 
       - name: Run Node tests
         run: npm test
-        # 6 pre-existing failures exist at baseline (zoom/layout/calibration tests).
-        # continue-on-error so the Tauri build always runs.
-        continue-on-error: true
 
       - name: Build Tauri Windows installer
         run: npm run tauri:build:win

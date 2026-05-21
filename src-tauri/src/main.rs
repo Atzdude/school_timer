@@ -25,7 +25,7 @@ fn main() {
             // page load event never fires (e.g. renderer failure path).
             let win_fallback = window.clone();
             std::thread::spawn(move || {
-                std::thread::sleep(std::time::Duration::from_millis(1500));
+                std::thread::sleep(std::time::Duration::from_millis(3000));
                 let _ = win_fallback.show();
             });
 
