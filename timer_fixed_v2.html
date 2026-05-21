@@ -3396,6 +3396,12 @@
 
         visibilityToggle.addEventListener('click', togglePresentationMode);
 
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && presentationMode) {
+                setPresentationMode(false);
+            }
+        });
+
         function setControlsLocked(enabled, shouldSave = true) {
             controlsLocked = !!enabled;
             document.body.classList.toggle('controls-locked', controlsLocked);
@@ -4642,7 +4648,8 @@
                 delBtn.addEventListener('click', () => {
                     showConfirm('Delete session "' + session.name + '"?', () => {
                         const all = loadSessions();
-                        all.splice(idx, 1);
+                        const matchIdx = all.findIndex(s => s.name === session.name);
+                        if (matchIdx !== -1) all.splice(matchIdx, 1);
                         saveSessions(all);
                         renderSessionList();
                     });
