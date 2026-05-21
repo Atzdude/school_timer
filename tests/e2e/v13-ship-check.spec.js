@@ -16,7 +16,7 @@ const { pathToFileURL } = require('node:url');
 const { test, expect } = require('@playwright/test');
 
 const appUrl = pathToFileURL(
-    path.join(__dirname, '..', '..', 'timer_fixed_v2.html')
+    path.join(__dirname, '..', '..', 'app', 'index.html')
 ).toString();
 
 // Use a large viewport that matches a typical projector / school monitor

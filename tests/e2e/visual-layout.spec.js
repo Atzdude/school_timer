@@ -2,7 +2,7 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { test, expect } = require('@playwright/test');
 
-const appUrl = pathToFileURL(path.join(__dirname, '..', '..', 'timer_fixed_v2.html')).toString();
+const appUrl = pathToFileURL(path.join(__dirname, '..', '..', 'app', 'index.html')).toString();
 
 test.use({ viewport: { width: 1440, height: 900 } });
 
