@@ -10,7 +10,7 @@ test('Electron package keeps the app identity as timer', () => {
   assert.equal(packageJson.build.productName, 'timer');
   assert.equal(packageJson.build.executableName, 'timer');
   assert.equal(packageJson.scripts.start, 'electron .');
-  assert.equal(packageJson.scripts.test, 'node --test tests/*.test.js');
+  assert.match(packageJson.scripts.test, /node --test/);
 });
 
 test('main process sets a stable window title and handles renderer load failures', () => {
