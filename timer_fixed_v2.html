@@ -247,15 +247,6 @@
             outline: none;
         }
 
-        .subtitle {
-            font-size: 0.82rem;
-            color: var(--muted);
-            margin-top: 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .live-clock {
             display: flex;
             align-items: baseline;
@@ -847,6 +838,7 @@
             overflow: hidden;
             position: relative;
             min-width: 0;
+            container: card / inline-size;
             --bar: var(--bar-neutral);
         }
 
@@ -1016,11 +1008,12 @@
         }
         .timer-controls.visible { display: block; }
 
+        /* Two-column form: labels share one column so every control starts on the same edge. */
         .drawer-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: 64px minmax(0, 1fr);
             align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            column-gap: 10px;
         }
         .drawer-row + .drawer-row { margin-top: 12px; }
 
@@ -1028,10 +1021,25 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--muted);
-            min-width: 64px;
         }
 
-        .duration-inputs { display: inline-flex; gap: 6px; }
+        .drawer-field {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .duration-inputs { display: contents; }
+
+        .drawer-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+        }
 
         .dur-field {
             display: inline-flex;
@@ -1043,7 +1051,7 @@
         }
         .dur-field:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(245, 192, 0, 0.45); }
         .dur-field input {
-            width: 46px;
+            width: 38px;
             height: 38px;
             border: 0;
             text-align: right;
@@ -1071,14 +1079,31 @@
             white-space: nowrap;
         }
         .timer-btn:hover { border-color: var(--ink-2); }
-        .timer-btn.update { background: var(--ink); border-color: var(--ink); color: #fff; }
+        .timer-btn.update { background: var(--ink); border-color: var(--ink); color: #fff; padding: 0 14px; }
+        .timer-btn.icon-only {
+            width: 38px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .timer-btn.icon-only svg { width: 17px; height: 17px; }
+        .drawer-actions .timer-btn { flex-shrink: 0; }
+
+        /* Narrow cards: labels sit above their fields so nothing wraps under a label. */
+        @container card (max-width: 400px) {
+            .drawer-row { grid-template-columns: minmax(0, 1fr); row-gap: 6px; }
+            .drawer-actions { gap: 4px; }
+            .drawer-actions .timer-btn:not(.icon-only) { padding: 0 9px; }
+            .color-dot { width: 30px; height: 30px; }
+        }
         .timer-btn.delete { margin-left: auto; color: var(--danger); border-color: transparent; background: transparent; }
         .timer-btn.delete:hover { background: #FDECEA; border-color: #F3C2BD; }
 
         .color-dot {
-            width: 30px;
-            height: 30px;
-            border-radius: 7px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             border: 2px solid transparent;
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
             flex-shrink: 0;
@@ -1169,8 +1194,7 @@
         body.presentation-mode .restore-all-btn,
         body.presentation-mode .control-lock-toggle,
         body.presentation-mode .shortcuts-btn,
-        body.presentation-mode .reading-duration-select,
-        body.presentation-mode .subtitle {
+        body.presentation-mode .reading-duration-select {
             display: none !important;
         }
 
@@ -1603,7 +1627,6 @@
         <div class="header-left">
             <div class="header-title-section">
                 <h1 class="main-title" id="mainTitle" title="Click to rename">Exam Timer</h1>
-                <p class="subtitle">Nurturing Excellence</p>
             </div>
         </div>
         <div class="live-clock" aria-hidden="true">
@@ -3447,6 +3470,8 @@
             grip: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>',
             play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>',
             pause: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>',
+            arrowLeft: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>',
+            arrowRight: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>',
             edit: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zM19.5 13.5V19.5A1.5 1.5 0 0118 21H5.25A1.5 1.5 0 013.75 19.5V6.75A1.5 1.5 0 015.25 5.25H10.5" /></svg>'
         };
 
@@ -3525,6 +3550,9 @@
             durationLabel.className = 'drawer-label';
             durationLabel.textContent = 'Duration';
             durationRow.appendChild(durationLabel);
+            const durationField = document.createElement('div');
+            durationField.className = 'drawer-field';
+            durationRow.appendChild(durationField);
 
             const durationInputsDiv = document.createElement('div');
             durationInputsDiv.className = 'duration-inputs';
@@ -3549,8 +3577,10 @@
                 wrap.appendChild(unit);
                 durationInputsDiv.appendChild(wrap);
             });
-            durationRow.appendChild(durationInputsDiv);
-            durationRow.appendChild(makeButton('timer-btn update', 'Set duration', 'update'));
+            durationField.appendChild(durationInputsDiv);
+            const setBtn = makeButton('timer-btn update', 'Set', 'update');
+            setBtn.title = 'Set this duration';
+            durationField.appendChild(setBtn);
             controlsDiv.appendChild(durationRow);
 
             // Row 2: colour
@@ -3560,6 +3590,9 @@
             colorLabel.className = 'drawer-label';
             colorLabel.textContent = 'Colour';
             colorRow.appendChild(colorLabel);
+            const colorField = document.createElement('div');
+            colorField.className = 'drawer-field';
+            colorRow.appendChild(colorField);
             PALETTE.forEach(c => {
                 const dot = document.createElement('button');
                 dot.type = 'button';
@@ -3580,20 +3613,26 @@
                     });
                     saveTimers();
                 });
-                colorRow.appendChild(dot);
+                colorField.appendChild(dot);
             });
             controlsDiv.appendChild(colorRow);
 
-            // Row 3: actions, destructive one pushed to the far end
+            // Action bar: one line, destructive action pushed to the far end
             const btnGroupDiv = document.createElement('div');
-            btnGroupDiv.className = 'drawer-row timer-btn-group';
+            btnGroupDiv.className = 'drawer-actions timer-btn-group';
+            btnGroupDiv.appendChild(makeButton('timer-btn reset', 'Reset', 'reset'));
+            btnGroupDiv.appendChild(makeButton('timer-btn clone', 'Duplicate', 'clone'));
             [
-                ['timer-btn reset', 'Reset', 'reset'],
-                ['timer-btn clone', 'Duplicate', 'clone'],
-                ['timer-btn move-up', 'Move earlier', 'move-up'],
-                ['timer-btn move-down', 'Move later', 'move-down'],
-                ['timer-btn delete', 'Delete', 'delete']
-            ].forEach(([cls, text, action]) => btnGroupDiv.appendChild(makeButton(cls, text, action)));
+                ['timer-btn icon-only move-up', 'move-up', 'Move earlier', ICONS.arrowLeft],
+                ['timer-btn icon-only move-down', 'move-down', 'Move later', ICONS.arrowRight]
+            ].forEach(([cls, action, label, icon]) => {
+                const btn = makeButton(cls, '', action);
+                btn.innerHTML = icon;
+                btn.title = label;
+                btn.setAttribute('aria-label', label);
+                btnGroupDiv.appendChild(btn);
+            });
+            btnGroupDiv.appendChild(makeButton('timer-btn delete', 'Delete', 'delete'));
             controlsDiv.appendChild(btnGroupDiv);
 
             bodyDiv.appendChild(controlsDiv);
