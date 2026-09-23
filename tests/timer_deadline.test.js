@@ -115,7 +115,11 @@ class FakeElement {
       properties: {},
       setProperty: (name, value) => {
         this.style.properties[name] = value;
-      }
+      },
+      removeProperty: (name) => {
+        delete this.style.properties[name];
+      },
+      getPropertyValue: (name) => this.style.properties[name] || ''
     };
     this.eventListeners = {};
     this.attributes = {};
@@ -199,6 +203,16 @@ class FakeElement {
 
   select() {}
 
+  // The vm context has no layout engine: report zero-sized boxes so geometry code runs its fallbacks.
+  getBoundingClientRect() {
+    return { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 };
+  }
+
+  get clientWidth() { return 0; }
+  get clientHeight() { return 0; }
+  get scrollWidth() { return 0; }
+  get scrollHeight() { return 0; }
+
   querySelector(selector) {
     return queryInTree([this], selector)[0] || null;
   }
@@ -229,6 +243,9 @@ class FakeDocument {
       el.id = id;
       this.body.appendChild(el);
     });
+    const container = new FakeElement('main', this);
+    container.className = 'container';
+    this.body.appendChild(container);
     this.getElementById('sessionsEmpty').className = 'sessions-empty';
     this.getElementById('timerName').tagName = 'INPUT';
     this.getElementById('timerDuration').tagName = 'INPUT';
@@ -405,6 +422,12 @@ function createHarness({ now = 1_000_000, storage = {} } = {}) {
 
   const context = {
     console,
+    getComputedStyle: () => ({
+      getPropertyValue: () => '',
+      paddingLeft: '0px',
+      paddingRight: '0px',
+      paddingBottom: '0px'
+    }),
     alert() {},
     confirm: () => true,
     prompt: () => '',
@@ -627,8 +650,8 @@ test('presentation mode gives title room by moving clock right and using icon-on
   assert.match(html, /body\.presentation-mode \.live-clock \{[\s\S]*?justify-self:\s*end/);
   assert.match(html, /body\.presentation-mode \.live-clock-date \{[\s\S]*?display:\s*none/);
   assert.match(html, /body\.presentation-mode \.header-action-label \{[\s\S]*?display:\s*none/);
-  assert.match(html, /<span class="header-action-label">Reading Time<\/span>/);
-  assert.match(html, /<span class="header-action-label">Presentation<\/span>/);
+  assert.match(html, /<span class="header-action-label">Reading time<\/span>/);
+  assert.match(html, /<span class="header-action-label" id="presentLabel">Present<\/span>/);
 });
 
 test('distance palette keeps white text above WCAG contrast threshold', () => {
@@ -1119,11 +1142,17 @@ test('import replaces all naisula_* keys and reloads timers', () => {
     }
   });
 
+  harness.api.createTimer('Timer on screen before import', 900);
   const result = harness.api.importAllData(blob);
 
   assert.equal(result.ok, true);
   assert.equal(harness.api.persistentStore.get('naisula_exam_title', null), 'Imported Hall');
-  assert.equal(harness.api.getTimers()[0].name, 'Imported Paper');
+  // The page reloads to apply the backup. Until then, the on-screen timers must not be
+  // written back over the imported ones (or merged into duplicates) by the heartbeat/unload save.
+  harness.api.saveTimers();
+  const storedTimers = harness.api.persistentStore.get('naisula_exam_timers', []);
+  assert.equal(storedTimers.length, 1);
+  assert.equal(storedTimers[0].name, 'Imported Paper');
 });
 
 test('import rejects unknown schema versions', () => {

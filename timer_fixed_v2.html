@@ -1133,7 +1133,8 @@
 
         .restore-all-btn { margin-top: 14px; }
 
-        /* ==================== HALL MODE (presentation) ==================== */
+        /* ==================== PRESENTATION MODE ==================== */
+        /* Hall view for the projector. */
         body.presentation-mode { background: var(--hall-bg); color: var(--digit); }
 
         body.presentation-mode .controls-section,
@@ -1174,9 +1175,9 @@
         }
         body.presentation-mode .main-title:hover { background: none; }
 
-        body.presentation-mode .live-clock { gap: 12px; }
+        body.presentation-mode .live-clock { gap: 12px; justify-self: end; }
         body.presentation-mode .live-clock-time { font-size: clamp(1.8rem, 6.2vh, 3.6rem); color: var(--digit); }
-        body.presentation-mode .live-clock-date { font-size: clamp(0.7rem, 1.6vh, 1rem); color: rgba(244, 241, 234, 0.6); }
+        body.presentation-mode .live-clock-date { display: none; }
 
         body.presentation-mode .header-right { flex-wrap: nowrap; opacity: 0.2; }
         body.presentation-mode.pointer-active .header-right,
@@ -2077,7 +2078,6 @@
         const gridToolbar = document.getElementById('gridToolbar');
         const headerTools = document.getElementById('headerTools');
         const scrollContainer = document.querySelector('.container');
-        const headerEl = document.querySelector('header');
 
         // ==================== LOGO FALLBACK ====================
         logoImg.addEventListener('error', function() {
@@ -2290,7 +2290,7 @@
             try { parsed = JSON.parse(jsonText); }
             catch (e) { return { ok: false, error: 'This file is not a valid backup (it is not JSON).' }; }
             if (!parsed || parsed.schema !== 'naisula-timer-v1') {
-                return { ok: false, error: 'This file is not a timer backup (expected naisula-timer-v1).' };
+                return { ok: false, error: 'This file is not a timer backup (unrecognised schema, expected naisula-timer-v1).' };
             }
             const data = parsed.data || {};
             const knownKeys = Object.values(STORAGE_KEYS);
@@ -2998,6 +2998,10 @@
             _measureHost.appendChild(span);
             const em = span.getBoundingClientRect().width / 100;
             span.remove();
+            if (!(em > 0)) {
+                // Not laid out (hidden frame / no layout engine): use Barlow's average advance, don't cache.
+                return text.length * (kind === 'digits' ? 0.44 : 0.4);
+            }
             _measureCache.set(key, em);
             return em;
         }
