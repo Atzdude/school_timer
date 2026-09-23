@@ -851,7 +851,7 @@ test('reset clears completion and restores original duration', () => {
   assert.equal(saved.remainingTime, 300);
 });
 
-test('Keep Done leaves completed timers flashing for seven seconds before shelving', () => {
+test('Keep Done shows completed timers as a steady TIME UP card for seven seconds before shelving', () => {
   const harness = createHarness({
     now: 100_000,
     storage: {
@@ -868,7 +868,11 @@ test('Keep Done leaves completed timers flashing for seven seconds before shelvi
   assert.ok(timeout, 'Keep Done should schedule done-shelf move after 7000ms');
   assert.equal(timer.completed, true);
   assert.equal(timer.remainingTime, 0);
-  assert.equal(harness.document.getElementById('display-110').classList.contains('blink'), true);
+  // Finished exams change colour but never flash: other exams in the room are still writing.
+  const box = harness.document.querySelector('.timer-box[data-timer-id="110"]');
+  assert.equal(box.classList.contains('status-ended'), true);
+  assert.equal(harness.document.getElementById('display-110').classList.contains('blink'), false);
+  assert.equal(harness.document.getElementById('status-110').textContent, 'Time up');
 });
 
 test('R shortcut starts reading time without resetting timers', () => {

@@ -209,14 +209,6 @@
             min-width: 0;
         }
 
-        .logo {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-            border-radius: 8px;
-            flex-shrink: 0;
-        }
-
         .header-title-section { min-width: 0; }
 
         .main-title {
@@ -353,6 +345,34 @@
             cursor: pointer;
         }
         .reading-duration-select:hover { background: var(--paper-sunk); }
+
+        /* ==================== PRESS FEEDBACK ==================== */
+        /* Every control physically "gives" when pressed, so a click is felt even before the result shows. */
+        .hdr-btn, .btn, .timer-btn, .card-icon-btn, .quick-duration-btn, .modal-btn,
+        .zoom-btn, .session-chip-load, .switch-btn, .reading-ctrl-btn, .color-dot, .link-btn,
+        .done-chip-remove, .session-chip-del, .quick-remove, .shortcuts-close, .guide-tab {
+            transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+            transition-duration: 150ms;
+            transition-timing-function: var(--ease-out);
+        }
+
+        .hdr-btn:active:not(:disabled), .btn:active:not(:disabled), .timer-btn:active,
+        .modal-btn:active, .reading-ctrl-btn:active, .switch-btn:active,
+        .session-chip-load:active, .quick-duration-btn:active, .zoom-btn:active, .link-btn:active {
+            transform: translateY(1px) scale(0.975);
+            transition-duration: 60ms;
+        }
+
+        .card-icon-btn:active:not(:disabled), .color-dot:active, .done-chip-remove:active,
+        .session-chip-del:active, .quick-remove:active, .shortcuts-close:active {
+            transform: scale(0.9);
+            transition-duration: 60ms;
+        }
+
+        .card-icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        /* Cards animating out of the grid (see animateGridChange) */
+        .timer-box.is-leaving { display: none; }
 
         /* ==================== LAYOUT ==================== */
         .container {
@@ -604,7 +624,7 @@
             display: inline-flex;
             align-items: stretch;
             border: 1px solid var(--line-strong);
-            border-radius: var(--radius-sm);
+            border-radius: 999px;
             background: #fff;
             overflow: hidden;
             max-width: 100%;
@@ -617,7 +637,7 @@
             gap: 8px;
             border: 0;
             background: none;
-            padding: 0 12px;
+            padding: 0 10px 0 14px;
             min-height: 40px;
             font-weight: 600;
             font-size: 0.92rem;
@@ -640,7 +660,7 @@
             border-left: 1px solid var(--line);
             background: none;
             color: var(--muted);
-            padding: 0 11px;
+            padding: 0 12px 0 10px;
             font-size: 1.05rem;
         }
         .session-chip-del:hover { color: var(--danger); background: #FDECEA; }
@@ -847,7 +867,7 @@
             background: var(--bar);
             color: #fff;
             padding: calc(var(--name-size) * 0.38) calc(var(--name-size) * 0.55);
-            min-height: calc(var(--name-lines) * var(--name-size) * 1.08 + var(--name-size) * 0.76);
+            min-height: calc(var(--name-lines) * var(--name-size) * 1.08 + var(--name-size) * 0.84);
             flex-shrink: 0;
         }
 
@@ -868,6 +888,9 @@
             -webkit-box-orient: vertical;
             -webkit-line-clamp: var(--name-max-lines);
             overflow: hidden;
+            /* The clamp clips at the padding edge: reserve room so g/y/p/q/j descenders are not cut. */
+            padding-bottom: 0.16em;
+            margin-bottom: -0.08em;
             cursor: text;
             border-radius: 4px;
         }
@@ -980,13 +1003,8 @@
 
         .timer-box.status-ended .timer-display { background: var(--crit); color: var(--on-crit); }
         .timer-box.status-ended .timer-status { background: #fff; color: var(--crit-deep); }
-        .timer-display.blink { animation: timeUpPulse 2s ease-in-out infinite; }
-
-        /* Slow (0.5 Hz) colour breathing - well under the 3 flashes/second seizure threshold */
-        @keyframes timeUpPulse {
-            0%, 100% { background-color: var(--crit); }
-            50% { background-color: var(--crit-deep); }
-        }
+        /* Time up is a steady colour change, never a flash: other exams in the room are still writing. */
+        .timer-box.status-ended .timer-display { background: var(--crit-deep); }
 
         /* --- Edit drawer (setup only) --- */
         .timer-controls {
@@ -1164,8 +1182,6 @@
             border-bottom: 1px solid #1F2430;
             gap: clamp(12px, 1.6vw, 28px);
         }
-
-        body.presentation-mode .logo { width: clamp(28px, 4.6vh, 44px); height: clamp(28px, 4.6vh, 44px); background: #fff; padding: 2px; }
 
         body.presentation-mode .main-title {
             font-size: clamp(1rem, 2.5vh, 1.6rem);
@@ -1556,12 +1572,12 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
+            /* Remove motion outright. A tiny non-zero duration would still start transitions, and the layout
+               engine would then measure mid-transition values (e.g. the previous font size). */
             *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
+                animation: none !important;
+                transition: none !important;
             }
-            .timer-display.blink { animation: none; }
             .reading-time-display.ending { animation: none; color: var(--gold); }
         }
     </style>
@@ -1585,7 +1601,6 @@
 
     <header>
         <div class="header-left">
-            <img src="naisula_logo.jpg" alt="Naisula School" class="logo" id="logoImg">
             <div class="header-title-section">
                 <h1 class="main-title" id="mainTitle" title="Click to rename">Exam Timer</h1>
                 <p class="subtitle">Nurturing Excellence</p>
@@ -1874,6 +1889,7 @@
             </div>
         </div>
     </div>
+    <script src="vendor/anime.umd.min.js"></script>
     <script>
         // ==================== STATE ====================
         let timers = [];
@@ -2068,7 +2084,6 @@
         const readingDurationSelect = document.getElementById('readingDurationSelect');
         const readingTimeContainer = document.getElementById('readingTimeContainer');
         const readingTimeDisplay = document.getElementById('readingTimeDisplay');
-        const logoImg = document.getElementById('logoImg');
         const zoomOutBtn = document.getElementById('zoomOutBtn');
         const zoomResetBtn = document.getElementById('zoomResetBtn');
         const zoomInBtn = document.getElementById('zoomInBtn');
@@ -2078,11 +2093,6 @@
         const gridToolbar = document.getElementById('gridToolbar');
         const headerTools = document.getElementById('headerTools');
         const scrollContainer = document.querySelector('.container');
-
-        // ==================== LOGO FALLBACK ====================
-        logoImg.addEventListener('error', function() {
-            this.style.display = 'none';
-        });
 
         // ==================== PERSISTENT STORAGE ====================
         const STORAGE_KEYS = {
@@ -2656,6 +2666,7 @@
                 return;
             }
 
+            finishGridMotion();
             parsed.forEach(item => createTimer(item.name.slice(0, 80), item.duration, null, true));
             saveTimers();
             closeBulkAddModal();
@@ -2772,6 +2783,8 @@
             presentLabel.textContent = presentationMode ? 'Exit' : 'Present';
             document.body.classList.toggle('presentation-mode', presentationMode);
             placeZoomControls();
+            finishGridMotion();
+            _gridLayout = null; // hall view uses slower, calmer layout motion
             if (presentationMode) {
                 requestPresentationFullscreen();
                 requestPresentationWakeLock();
@@ -2970,6 +2983,7 @@
         const DIGIT_LINE_HEIGHT = 0.86;   // matches .timer-display line-height
         const DIGIT_GLYPH_HEIGHT = 0.72;  // Barlow Condensed figure height per em
         const NAME_LINE_HEIGHT = 1.08;    // matches .timer-name line-height
+        const NAME_DESCENDER_PAD = 0.16;  // matches .timer-name padding-bottom (em)
         const _measureCache = new Map();
         let _measureHost = null;
         let _layoutRaf = null;
@@ -3026,6 +3040,10 @@
         }
 
         function layoutTimers() {
+            if (_layoutAnimating) {
+                _layoutPendingRelayout = true;
+                return;
+            }
             const grid = timersContainer;
             const n = timers.length;
             for (let i = 1; i <= 7; i++) grid.classList.remove('count-' + i);
@@ -3112,7 +3130,9 @@
             grid.classList.toggle('row-layout', best.orient === 'row');
             const maxLines = best.orient === 'row' ? 4 : 2;
             grid.style.setProperty('--name-max-lines', String(maxLines));
-            const lines = settleNames(grid, Math.round(best.nameSize), maxLines, 0.72);
+            // Row cards: the name column is as tall as the card, minus the header's own padding.
+            const nameRoom = best.orient === 'row' ? Math.floor(best.ch - best.nameSize * 0.76) : 0;
+            const lines = settleNames(grid, Math.round(best.nameSize), maxLines, 0.6, nameRoom);
             grid.style.setProperty('--name-lines', best.orient === 'row' ? '1' : String(lines));
             fitDigits(grid, digitEm);
         }
@@ -3125,7 +3145,7 @@
                 nameSize = clampNumber(Math.min(ch * 0.135, cw * 0.07) * nameScale, 18, 96);
                 const nameWidth = cw - nameSize * 1.1;
                 const lines = clampNumber(Math.ceil((longestNameEm * nameSize) / Math.max(nameWidth, 1)), 1, 2);
-                const headerH = lines * nameSize * NAME_LINE_HEIGHT + nameSize * 0.76;
+                const headerH = lines * nameSize * NAME_LINE_HEIGHT + nameSize * 0.84;
                 dw = cw * 0.92;
                 dh = ch - headerH;
             } else {
@@ -3141,24 +3161,42 @@
             return { orient, nameSize, f };
         }
 
-        // Every name gets the same font size; only names that would exceed maxLines shrink (down to
-        // floorRatio), then clamp with an ellipsis. Returns the most lines any name uses so all headers
-        // in the grid share one height and the digits line up across a row.
-        function settleNames(grid, baseSize, maxLines, floorRatio) {
+        // Every name gets the same font size; only names that would not fit shrink (down to floorRatio).
+        // "Fit" means at most maxLines lines AND no taller than maxHeightPx (the room the card really has).
+        // If a name still does not fit at the floor size, it is clamped to whole lines with an ellipsis,
+        // never cut through the middle of a line. Returns the most lines any name uses so all headers in
+        // the grid share one height and the digits line up across a row.
+        function settleNames(grid, baseSize, maxLines, floorRatio, maxHeightPx) {
             let used = 1;
-            grid.querySelectorAll('.timer-name').forEach(el => {
+            grid.querySelectorAll('.timer-box:not(.is-leaving) .timer-name').forEach(el => {
                 el.style.fontSize = '';
-                const linesAt = (px) => Math.round(el.scrollHeight / (px * NAME_LINE_HEIGHT));
-                let lines = linesAt(baseSize);
-                if (lines > maxLines) {
+                // Measure the full text: Chrome's line-clamp stops scrollHeight at the clamped lines.
+                el.style.display = 'block';
+                el.style.setProperty('-webkit-line-clamp', 'none');
+                // scrollHeight includes the descender padding, so take it out before counting lines.
+                const linesAt = (px) => Math.round((el.scrollHeight - px * NAME_DESCENDER_PAD) / (px * NAME_LINE_HEIGHT));
+                const fits = (px) => linesAt(px) <= maxLines && (!maxHeightPx || el.scrollHeight <= maxHeightPx + 1);
+                let size = baseSize;
+                if (!fits(baseSize)) {
                     let lo = Math.floor(baseSize * floorRatio), hi = baseSize;
                     while (hi - lo > 1) {
                         const mid = Math.floor((lo + hi) / 2);
                         el.style.fontSize = mid + 'px';
-                        if (linesAt(mid) > maxLines) hi = mid; else lo = mid;
+                        if (fits(mid)) lo = mid; else hi = mid;
                     }
-                    el.style.fontSize = lo + 'px';
-                    lines = Math.min(maxLines, linesAt(lo));
+                    size = lo;
+                    el.style.fontSize = size + 'px';
+                }
+                let lines = linesAt(size);
+                const stillTooBig = !fits(size);
+                el.style.display = '';
+                el.style.removeProperty('-webkit-line-clamp');
+                if (stillTooBig) {
+                    const byHeight = maxHeightPx
+                        ? Math.floor((maxHeightPx - size * NAME_DESCENDER_PAD) / (size * NAME_LINE_HEIGHT))
+                        : maxLines;
+                    lines = Math.max(1, Math.min(maxLines, byHeight));
+                    el.style.setProperty('-webkit-line-clamp', String(lines));
                 }
                 used = Math.max(used, Math.min(lines, maxLines));
             });
@@ -3166,7 +3204,7 @@
         }
 
         function fitDigits(grid, digitEm) {
-            const displays = grid.querySelectorAll('.timer-display');
+            const displays = grid.querySelectorAll('.timer-box:not(.is-leaving) .timer-display');
             const pillPx = parseFloat(grid.style.getPropertyValue('--pill-size')) || 12;
             const pillH = pillPx * 1.9;
             let size = Infinity;
@@ -3183,6 +3221,112 @@
         function resetPresentationScroll() {
             if (!presentationMode) return;
             scrollContainer.scrollTop = 0;
+        }
+
+        // ==================== MOTION ====================
+        // anime.js (vendored, offline) animates layout changes only: cards sliding to new places when an
+        // exam is added, removed or reordered, so nobody loses track of where their exam went. Numbers
+        // and state colours never animate. Everything is skipped under prefers-reduced-motion.
+        const reducedMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+        let _gridLayout = null;
+        let _motionBatch = false;
+        let _animeMissingWarned = false;
+        let _layoutAnimating = false;      // cards are mid-flight: measuring now would read animated boxes
+        let _layoutPendingRelayout = false;
+        let _motionToken = 0;
+
+        function motionAllowed() {
+            if (reducedMotionQuery && reducedMotionQuery.matches) return false;
+            // A hidden window gets no animation frames; changes must apply instantly, not freeze mid-way.
+            if (document.hidden) return false;
+            if (typeof anime === 'undefined') {
+                if (!_animeMissingWarned) {
+                    console.warn('anime.js did not load (vendor/anime.umd.min.js); layout changes will not animate.');
+                    _animeMissingWarned = true;
+                }
+                return false;
+            }
+            return true;
+        }
+
+        function getGridLayout() {
+            if (_gridLayout) return _gridLayout;
+            _gridLayout = anime.createLayout(timersContainer, {
+                children: '.timer-box',
+                duration: presentationMode ? 560 : 340,
+                ease: 'out(4)',
+                enterFrom: { opacity: 0, transform: 'scale(0.96)', duration: 280, ease: 'out(3)' },
+                leaveTo: { opacity: 0, transform: 'scale(0.96)', duration: 200, ease: 'out(2)' }
+            });
+            return _gridLayout;
+        }
+
+        // Removes a card: hidden during an animated change (anime.js fades it out), otherwise removed now.
+        function retireTimerElement(el) {
+            if (!el) return;
+            if (_motionBatch) el.classList.add('is-leaving');
+            else el.remove();
+        }
+
+        // Cards never carry intentional inline styles; drop what the layout animation leaves behind.
+        function clearCardMotionStyles() {
+            timersContainer.querySelectorAll('.timer-box[style]').forEach(el => el.removeAttribute('style'));
+        }
+
+        // Jumps any running layout animation to its end state and clears cards that were leaving.
+        function finishGridMotion() {
+            _motionToken++;
+            if (_gridLayout && _gridLayout.timeline && !_gridLayout.timeline.completed) {
+                _gridLayout.timeline.complete();
+            }
+            timersContainer.querySelectorAll('.timer-box.is-leaving').forEach(el => el.remove());
+            clearCardMotionStyles();
+            _layoutAnimating = false;
+            if (_layoutPendingRelayout) {
+                _layoutPendingRelayout = false;
+                layoutTimers();
+            }
+        }
+
+        // Runs a DOM change (add / delete / reorder) and animates cards from their old to new positions.
+        function animateGridChange(mutate) {
+            finishGridMotion();
+            if (!motionAllowed()) { mutate(); return; }
+            const layout = getGridLayout();
+            let run;
+            _motionBatch = true;
+            try {
+                run = layout.update(() => mutate());
+            } finally {
+                _motionBatch = false;
+            }
+            const token = _motionToken;
+            _layoutAnimating = true;
+            run.then(() => {
+                if (token !== _motionToken) return; // superseded by a newer change
+                timersContainer.querySelectorAll('.timer-box.is-leaving').forEach(el => el.remove());
+                clearCardMotionStyles();
+                requestAnimationFrame(clearCardMotionStyles); // anime writes a final `translate` on enter
+                _layoutAnimating = false;
+                if (_layoutPendingRelayout) {
+                    _layoutPendingRelayout = false;
+                    layoutTimers();
+                }
+            });
+        }
+
+        // Small confirmation that a global action reached every card (Start all / Pause all).
+        function acknowledgeCards(changedTimers) {
+            if (!motionAllowed() || changedTimers.length === 0) return;
+            const pills = changedTimers
+                .map(t => document.getElementById('status-' + t.id))
+                .filter(Boolean);
+            anime.animate(pills, {
+                scale: [1, 1.14, 1],
+                duration: 380,
+                ease: 'out(3)',
+                delay: anime.stagger(35)
+            });
         }
 
         // ==================== TIMER MANAGEMENT ====================
@@ -3204,7 +3348,7 @@
             }
 
             hideFormError();
-            createTimer(name, totalSeconds);
+            animateGridChange(() => createTimer(name, totalSeconds));
             timerNameInput.value = '';
             // Keep the duration: the next exam is usually the same length.
             timerNameInput.focus();
@@ -3217,13 +3361,15 @@
         timerDurationInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addTimerFromForm(); });
 
         function startAllTimers() {
-            timers.forEach(timer => {
-                if (!timer.isRunning && timer.remainingTime > 0) startTimer(timer);
-            });
+            const changed = timers.filter(timer => !timer.isRunning && timer.remainingTime > 0);
+            changed.forEach(startTimer);
+            acknowledgeCards(changed);
         }
 
         function pauseAllTimers() {
-            timers.forEach(timer => { if (timer.isRunning) pauseTimer(timer); });
+            const changed = timers.filter(timer => timer.isRunning);
+            changed.forEach(timer => pauseTimer(timer));
+            acknowledgeCards(changed);
         }
 
         startAllBtn.addEventListener('click', startAllTimers);
@@ -3242,6 +3388,7 @@
         clearAllBtn.addEventListener('click', () => {
             if (timers.length === 0 && doneShelf.children.length === 0) { showAlert('There are no exams to clear.'); return; }
             showConfirm('Delete all ' + timers.length + ' exam' + (timers.length === 1 ? '' : 's') + '? This cannot be undone.', () => {
+                finishGridMotion();
                 timers.forEach(timer => pauseTimer(timer, false));
                 document.querySelectorAll('.timer-box').forEach(el => el.remove());
                 clearDoneShelf();
@@ -3461,6 +3608,7 @@
                 const t = timers.find(x => x.id === timer.id);
                 if (!t || controlsLocked || presentationMode) return;
                 if (t.isRunning) pauseTimer(t); else startTimer(t);
+                acknowledgeCards([t]);
             });
 
             editToggle.addEventListener('click', () => {
@@ -3479,9 +3627,9 @@
                     if (controlsLocked || presentationMode) return;
                     switch (action) {
                         case 'reset': resetTimer(t); break;
-                        case 'clone': createTimer(t.name, t.duration, null, false, t.color); break;
-                        case 'move-up': moveTimerBy(t.id, -1); break;
-                        case 'move-down': moveTimerBy(t.id, 1); break;
+                        case 'clone': animateGridChange(() => createTimer(t.name, t.duration, null, false, t.color)); break;
+                        case 'move-up': animateGridChange(() => moveTimerBy(t.id, -1)); break;
+                        case 'move-down': animateGridChange(() => moveTimerBy(t.id, 1)); break;
                         case 'delete':
                             showConfirm('Delete "' + t.name + '"? You can undo this straight after.', () => {
                                 deleteTimer(t.id, { allowUndo: true });
@@ -3526,7 +3674,7 @@
                 el.classList.remove('drag-over');
                 const draggedId = parseInt(e.dataTransfer.getData('text/plain'), 10);
                 if (draggedId === timer.id) return;
-                reorderTimers(draggedId, timer.id);
+                animateGridChange(() => reorderTimers(draggedId, timer.id));
             });
 
             updateTimerState(timer);
@@ -3850,12 +3998,12 @@
             if (!lastDeletedTimer) return;
             const restored = lastDeletedTimer;
             lastDeletedTimer = null;
-            createTimer(restored.name, restored.duration, null, true, restored.color, {
+            animateGridChange(() => createTimer(restored.name, restored.duration, null, true, restored.color, {
                 remainingTime: restored.remainingTime,
                 isRunning: false,
                 endTime: null,
                 completed: false
-            });
+            }));
             updateUndoDeleteButton();
             saveTimers();
         });
@@ -3868,11 +4016,12 @@
                 showToast('Deleted "' + timer.name + '". Use Undo delete to bring it back.');
             }
             if (timer) pauseTimer(timer, false);
-            timers = timers.filter(t => t.id !== timerId);
-            const el = document.querySelector('.timer-box[data-timer-id="' + timerId + '"]');
-            if (el) el.remove();
-            updateNoTimersMessage();
-            updateGridLayout();
+            animateGridChange(() => {
+                timers = timers.filter(t => t.id !== timerId);
+                retireTimerElement(document.querySelector('.timer-box[data-timer-id="' + timerId + '"]'));
+                updateNoTimersMessage();
+                updateGridLayout();
+            });
             saveTimers();
         }
 
@@ -3880,7 +4029,6 @@
             const display = document.getElementById('display-' + timer.id);
             if (!display) return;
             display.textContent = formatTime(timer.remainingTime);
-            display.classList.toggle('blink', !!(timer.completed && timer.remainingTime === 0));
             // Crossing 1:00:00 changes the digit count, so the whole grid can grow.
             if (currentDigitPattern() !== _layoutPatternKey) scheduleLayout();
         }
@@ -3957,6 +4105,7 @@
         restoreAllBtn.addEventListener('click', () => {
             const chips = Array.from(doneShelf.querySelectorAll('.done-chip'));
             if (chips.length === 0) return;
+            finishGridMotion();
             chips.forEach(chip => {
                 const name = chip.dataset.timerName;
                 const duration = parseInt(chip.dataset.timerDuration, 10);
@@ -3970,10 +4119,11 @@
         });
 
         function sendToDoneShelf(timer) {
-            timers = timers.filter(t => t.id !== timer.id);
-            const el = document.querySelector('.timer-box[data-timer-id="' + timer.id + '"]');
-            if (el) el.remove();
-            updateNoTimersMessage();
+            animateGridChange(() => {
+                timers = timers.filter(t => t.id !== timer.id);
+                retireTimerElement(document.querySelector('.timer-box[data-timer-id="' + timer.id + '"]'));
+                updateNoTimersMessage();
+            });
             saveTimers();
 
             const chip = document.createElement('div');
@@ -4081,6 +4231,7 @@
                 return;
             }
             const doLoad = () => {
+                finishGridMotion();
                 timers.forEach(t => pauseTimer(t, false));
                 document.querySelectorAll('.timer-box').forEach(el => el.remove());
                 clearDoneShelf();
@@ -4272,7 +4423,7 @@
                     if (timers.some(t => t.isRunning)) {
                         pauseAllTimers();
                     } else {
-                        timers.forEach(t => { if (!t.completed && t.remainingTime > 0) startTimer(t); });
+                        startAllTimers();
                     }
                     break;
                 case 'p':

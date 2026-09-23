@@ -34,7 +34,8 @@
       "naisula_logo.jpg",
       "build/icon.ico",
       "package.json",
-      "fonts/**"
+      "fonts/**",
+      "vendor/**"
     ],
     "directories": {
       "output": "dist"

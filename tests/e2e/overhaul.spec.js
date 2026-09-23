@@ -135,17 +135,6 @@ test.describe('States students can read', () => {
     await expect(page.locator('.timer-status').nth(1)).toHaveText('Ready');
   });
 
-  test('time-up animation stays under 3 flashes per second', async ({ page }) => {
-    await addTimer(page, 'Ending', '1h');
-    const duration = await page.evaluate(() => {
-      completeTimer(timers[0]);
-      const d = document.querySelector('.timer-display');
-      return getComputedStyle(d).animationDuration;
-    });
-    // One full cycle is at most one flash; 2s means 0.5 flashes per second.
-    expect(parseFloat(duration)).toBeGreaterThanOrEqual(1);
-  });
-
   test('exam type colour only matches the whole word IB', async ({ page }) => {
     const types = await page.evaluate(() => [getExamType('Bible Knowledge'), getExamType('IB Chemistry HL'), getExamType('Caribbean Studies'), getExamType('A-Level Physics')]);
     expect(types).toEqual(['standard', 'ib', 'standard', 'igcse-a-level']);
@@ -205,5 +194,44 @@ test.describe('Renaming', () => {
     await page.locator('.timer-name-input').fill('Changed');
     await page.keyboard.press('Escape');
     await expect(page.locator('.timer-name').first()).toHaveText('Original name');
+  });
+});
+
+test.describe('Exam names are never clipped', () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  // Where the glyph ink ends (incl. g/y/p descenders) must stay inside the name box, unless the
+  // name is deliberately clamped with an ellipsis.
+  async function clippedNames(page) {
+    return page.evaluate(() => Array.from(document.querySelectorAll('.timer-name')).filter(el => {
+      if (el.style.getPropertyValue('-webkit-line-clamp')) return false; // clamped on purpose
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const inkBottom = Math.max(...Array.from(range.getClientRects()).map(r => r.bottom));
+      const size = parseFloat(getComputedStyle(el).fontSize);
+      const box = el.getBoundingClientRect();
+      const header = el.closest('.timer-header').getBoundingClientRect();
+      return inkBottom + size * 0.06 > box.bottom + 1 || box.top < header.top - 1 || box.bottom > header.bottom + 1;
+    }).map(el => el.textContent));
+  }
+
+  test('descenders and long names fit at every size, in setup and hall view', async ({ page }) => {
+    for (const name of ['gigi', 'Geography Paper 1 (yearly)', 'Physics, Biology and Chemistry: Paper 2 Theory Questions']) {
+      await addTimer(page, name);
+    }
+    for (const preset of ['compact', 'desk', 'classroom', 'hall']) {
+      await page.locator('#timerSizePreset').selectOption(preset);
+      expect(await clippedNames(page), 'setup ' + preset).toEqual([]);
+    }
+    await page.locator('#visibilityToggle').click();
+    await page.waitForTimeout(200);
+    for (let step = 0; step < 4; step++) {
+      expect(await clippedNames(page), 'hall step ' + step).toEqual([]);
+      await page.locator('#zoomInBtn').click({ force: true });
+    }
+    for (let step = 0; step < 6; step++) {
+      await page.locator('#zoomOutBtn').click({ force: true });
+      expect(await clippedNames(page), 'hall out ' + step).toEqual([]);
+    }
   });
 });
