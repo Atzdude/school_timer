@@ -176,7 +176,7 @@ test.describe('Timer functionality', () => {
         await page.locator('#confirmModalOk').click();
         await page.waitForTimeout(200);
         const after = await page.locator('.timer-display').first().textContent();
-        expect(after).toBe('00:30:00');
+        expect(after).toBe('30:00');
         expect(mid).not.toBe('30:00');
     });
 
