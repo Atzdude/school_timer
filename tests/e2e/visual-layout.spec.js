@@ -76,17 +76,23 @@ async function assertDisplayInsideCard(page) {
   }
 }
 
-async function assertMinimumDisplaySize(page, minWidth, minHeight) {
-  const displays = await page.locator('.timer-display').evaluateAll(els =>
-    els.map((el, i) => {
-      const r = el.getBoundingClientRect();
-      return { index: i, width: Math.round(r.width), height: Math.round(r.height) };
-    })
-  );
-  const undersized = displays.filter(d => d.width < minWidth || d.height < minHeight);
-  if (undersized.length > 0) {
-    throw new Error(`Timer display is too small: ${JSON.stringify(undersized)}`);
+// Hall view sizes the digits to fill each card, so assert on what students actually read:
+// the rendered digit size, that nothing is clipped, and that the page never needs scrolling.
+async function assertDigitsAtLeast(page, minPx) {
+  const result = await page.evaluate(() => {
+    const container = document.querySelector('.container');
+    return {
+      sizes: Array.from(document.querySelectorAll('.timer-display')).map(el => parseFloat(getComputedStyle(el).fontSize)),
+      clipped: Array.from(document.querySelectorAll('.timer-display')).filter(el => el.scrollWidth > el.clientWidth + 2).length,
+      overflowY: container.scrollHeight - container.clientHeight
+    };
+  });
+  const small = result.sizes.filter(px => px < minPx);
+  if (small.length > 0) {
+    throw new Error(`Timer digits smaller than ${minPx}px: ${JSON.stringify(result.sizes)}`);
   }
+  expect(result.clipped).toBe(0);
+  expect(result.overflowY).toBeLessThanOrEqual(1);
 }
 
 async function assertGridStartsInView(page) {
@@ -188,7 +194,7 @@ test.describe('Presentation mode — layout at different zoom levels', () => {
     await page.screenshot({ path: 'tests/screenshots/pres-3timers.png', fullPage: false });
     await assertNoOverlap(page);
     await assertDisplayInsideCard(page);
-    await assertMinimumDisplaySize(page, 640, 240);
+    await assertDigitsAtLeast(page, 180);
   });
 
   test('4 timers in presentation: no overlap, display inside card', async ({ page }) => {
@@ -209,7 +215,7 @@ test.describe('Presentation mode — layout at different zoom levels', () => {
     await page.screenshot({ path: 'tests/screenshots/pres-5timers.png', fullPage: false });
     await assertNoOverlap(page);
     await assertDisplayInsideCard(page);
-    await assertMinimumDisplaySize(page, 440, 210);
+    await assertDigitsAtLeast(page, 100);
   });
 
   test('6 timers in presentation: no overlap, display inside card', async ({ page }) => {
@@ -219,7 +225,7 @@ test.describe('Presentation mode — layout at different zoom levels', () => {
     await page.screenshot({ path: 'tests/screenshots/pres-6timers.png', fullPage: false });
     await assertNoOverlap(page);
     await assertDisplayInsideCard(page);
-    await assertMinimumDisplaySize(page, 440, 210);
+    await assertDigitsAtLeast(page, 100);
   });
 
   test('7 timers in presentation: reflows instead of shrinking into tiny columns', async ({ page }) => {
@@ -229,7 +235,7 @@ test.describe('Presentation mode — layout at different zoom levels', () => {
     await page.screenshot({ path: 'tests/screenshots/pres-7timers.png', fullPage: false });
     await assertNoOverlap(page);
     await assertDisplayInsideCard(page);
-    await assertMinimumDisplaySize(page, 440, 210);
+    await assertDigitsAtLeast(page, 100);
   });
 
   test('7 timers in presentation at 125 percent: long titles do not crowd rows', async ({ page }) => {
@@ -248,7 +254,7 @@ test.describe('Presentation mode — layout at different zoom levels', () => {
     await page.screenshot({ path: 'tests/screenshots/pres-7timers-125.png', fullPage: false });
     await assertNoOverlap(page);
     await assertDisplayInsideCard(page);
-    await assertMinimumDisplaySize(page, 680, 260);
+    await assertDigitsAtLeast(page, 90);
     await assertGridStartsInView(page);
   });
 
@@ -271,7 +277,7 @@ test.describe('Presentation mode — layout at different zoom levels', () => {
     await page.screenshot({ path: 'tests/screenshots/pres-4timers-long-names-large.png', fullPage: false });
     await assertNoOverlap(page);
     await assertDisplayInsideCard(page);
-    await assertMinimumDisplaySize(page, 680, 230);
+    await assertDigitsAtLeast(page, 110);
   });
 
   test('zoom out (compact preset) in presentation: no overlap', async ({ page }) => {

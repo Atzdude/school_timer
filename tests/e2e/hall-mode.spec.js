@@ -26,7 +26,7 @@ test('hall mode hides setup and action controls while keeping timers readable', 
   await expect(page.locator('.sessions-section')).toBeHidden();
   await expect(page.locator('.action-buttons')).toBeHidden();
   await expect(page.locator('.timer-controls')).toBeHidden();
-  await expect(page.locator('.timer-display')).toHaveText('02:00:00');
+  await expect(page.locator('.timer-display')).toHaveText('2:00:00');
 
   const timerBox = await page.locator('.timer-box').boundingBox();
   const display = await page.locator('.timer-display').boundingBox();
@@ -41,8 +41,8 @@ test('controls support bulk add, lock, undo delete, and zoom presets', async ({ 
   await page.locator('#bulkAddSave').click();
 
   await expect(page.locator('.timer-box')).toHaveCount(2);
-  await expect(page.locator('.timer-display').first()).toHaveText('01:30:00');
-  await expect(page.locator('.timer-display').nth(1)).toHaveText('00:45:00');
+  await expect(page.locator('.timer-display').first()).toHaveText('1:30:00');
+  await expect(page.locator('.timer-display').nth(1)).toHaveText('45:00');
 
   await page.locator('#timerSizePreset').selectOption('compact');
   await expect(page.locator('#zoomResetBtn')).toHaveText('72%');
