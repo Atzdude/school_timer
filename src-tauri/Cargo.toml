@@ -4,6 +4,7 @@ version = "1.4.0"
 description = "Naisula exam timer — Tauri shell"
 authors = ["Naisula School"]
 edition = "2021"
+license = "MIT"
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

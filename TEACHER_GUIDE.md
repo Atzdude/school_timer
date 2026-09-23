@@ -1,160 +1,141 @@
-# Naisula Exam Timer — Teacher Guide
-### What's New & How to Use It
+# Exam Timer: Teacher Guide
+
+Everything you need to run an exam with this timer. It takes about five minutes to read.
 
 ---
 
-## The Basics (Quick Recap)
+## Before the exam
 
-- **Add a timer** — type the exam name and duration (e.g. `1h30m`, `90`, `2:00:00`) then click **Add Timer**
-- **Quick Durations** — click any saved duration button to skip typing the time; right-click a button to remove it; click **+ Add Custom** to save a new one
-- **Start / Stop / Reset All** — the buttons above the timers control every timer at once
-- **Presentation Mode** — enters a projector-focused fullscreen view and hides editing/action controls
-- **Timer Size** — use the size preset menu or A-/A+ controls in the header to fit the room
+### 1. Add your exams
 
----
+In **Add an exam**, type the exam name and a duration, then click **Add exam**.
 
-## New Features
+You can type durations the way you'd say them:
 
-### 1. Saved Sessions
-**The problem it solves:** You no longer need to re-enter the same set of timers every day.
+| You type | You get |
+|---|---|
+| `2h` or `2 hours` | 2 hours |
+| `1h30m` or `1.5h` | 1 hour 30 minutes |
+| `90` | 90 minutes (a plain number means minutes) |
+| `1:30` | 1 hour 30 minutes |
+| `45m` | 45 minutes |
 
-**How to use:**
-1. Set up your timers for the day as normal (e.g. Maths P1 + Bio P2 + Physics P3)
-2. Click **Save Current** in the *Saved Sessions* panel
-3. Give the session a name (e.g. "Tuesday Block A")
-4. Next time — click that session name to reload all those timers instantly
+If the timer can't read what you typed, it tells you and adds nothing. It never guesses.
 
-> Sessions are saved permanently on this computer. You can have as many as you need — one per exam day, per class group, or per paper combination.
+The duration stays filled in after you add an exam. So if three papers are all 2 hours, you only type `2h` once.
 
-To delete a session, click the **×** on the right of its chip.
+**Quick fill.** Click a duration button such as **1h 30m** to fill it in. If you've already typed a name, the exam is added straight away. Click **+ Add** to save a length you use often. Click the **x** next to a button (or right-click it) to remove it.
 
----
+### 2. Or paste the whole timetable
 
-### 2. Duplicate Timer
-**The problem it solves:** Two rooms sitting the same paper — previously you typed it twice.
-
-**How to use:**
-1. Click the ⚙ gear icon on any timer card
-2. Click **Duplicate**
-
-A copy of that timer (same name, duration, and colour) appears immediately. Rename it if needed by clicking the name in the header.
-
----
-
-### 3. Keep Done Timers
-**The problem it solves:** When a paper finishes the timer used to disappear. Now you can keep a visible record of which exams have ended.
-
-**How to use:**
-1. Click **Keep Done** in the action buttons row — it turns green when active
-2. When a timer reaches zero it moves to a compact "done strip" at the bottom of the screen after 7 seconds
-3. Each chip shows the exam name and a **DONE** badge in the timer's colour
-4. Click **×** on a chip to remove it manually
-5. **Clear All** wipes the done strip along with active timers
-
-> This setting is saved — it stays on or off between sessions without needing to toggle it each time.
-
----
-
-### 4. Hall / Presentation Controls
-**The problem it solves:** In a hall, the countdown must be readable from the back and teachers should not have risky controls on the projected screen.
-
-**How to use:**
-- Click **Presentation** to enter the hall view. The app requests fullscreen and keeps the display awake while this mode is active.
-- Start/stop/reset/clear controls are hidden in Presentation Mode so the timer area gets maximum space.
-- Press `P` again or click the Presentation button to leave the mode.
-- Press `F11` to toggle the Electron window fullscreen at any time.
-- Click **Visibility Check** before an exam to show large sample digits and colour swatches for a back-of-hall readability check.
-
-### 5. Timer Size Controls
-Use the header size controls when the projected timer is too big or too small:
-
-| Control | Action |
-|---------|--------|
-| Preset menu | Compact, Desk, Classroom, or Hall sizing |
-| `A-` / `A+` | Smaller or larger timers |
-| `%` button | Reset to Classroom size |
-| `Ctrl` + mouse wheel | Zoom timers quickly |
-| `Ctrl` + `+` / `-` | Zoom timers with the keyboard |
-| `Ctrl` + `0` | Reset timer size |
-
-### 6. Lock, Undo, and Safer Edits
-**Lock** hides editing controls and prevents accidental timer changes while leaving normal start/stop behavior available.
-
-Individual deletes now ask for confirmation. After deleting one timer, click **Undo Delete** to restore it immediately.
-
-If you update the duration of a timer that is already running, the app asks for confirmation because that resets the running timer to the new full duration.
-
-### 7. Add Timers Quickly
-Use **Add from List** to paste several timers at once.
-
-Examples:
+Click **Add from a list** and paste one exam per line:
 
 ```text
 Mathematics Paper 1, 2h
-Biology Paper 2, 1h30m
+English Language, Paper 1, 1h45m
+Biology - Paper 2 - 1h30m
 Physics Paper 3
 ```
 
-If a line has no duration, it uses the duration currently typed in the normal Duration field.
+- The duration goes after the last comma (or a dash with spaces around it), so names can have commas in them.
+- A line with no duration uses the default length in the box below the list.
+- If one line is wrong, the timer tells you which line and adds nothing until you fix it.
 
-### 8. Reading Time Options
-Choose 5, 10, or 15 minutes from the menu beside **Reading Time**, then click **Reading Time** or press `R`.
+### 3. Edit an exam
 
-### 9. Sound Alert
-Use **Sound** in the header to enable or disable a short completion tone. Leave it off for quiet halls.
+Click the pencil on any exam card to open its editor:
 
-### 10. Keyboard Shortcuts
-**The problem it solves:** Faster control during exams without moving to the mouse.
+- **Duration:** change the hours, minutes and seconds, then click **Set**. If that exam is already running, it asks before restarting it.
+- **Colour:** six colours (navy, burgundy, forest green, royal blue, violet, teal) to tell papers apart.
+- **Reset**, **Duplicate** (handy when two rooms sit the same paper), the arrows to move it earlier or later, and **Delete**.
 
-| Key | Action |
-|-----|--------|
-| `Space` | Start all timers (or pause all if running) |
-| `P` | Toggle Presentation Mode on/off |
-| `R` | Start Reading Time |
-| `Ctrl` + `+` / `-` | Zoom timer display |
-| `Ctrl` + mouse wheel | Zoom timer display |
-| `Ctrl` + `0` | Reset timer size |
-| `F11` | Toggle app fullscreen |
-| `Esc` | Close any open panel |
-| `?` | Show/hide this shortcuts reference |
+To rename an exam, click its name. Press **Enter** to save or **Esc** to cancel. You can also drag cards to reorder them.
 
-> Shortcuts are ignored when you are typing in a text field.
+### 4. Save it for next time
 
-Click the **?** button in the top-right corner of the header to see the shortcuts list at any time.
+In **Saved sessions**, click **Save current** and give it a name like "Tuesday Block A". Next time, click that name to load every exam at once. Save the night before, and on the morning you only need one click.
+
+**Back up** downloads everything (exams, sessions, settings) as a file. **Restore** loads that file on another computer.
 
 ---
 
-### 11. Live Clock
-The current time is always visible in the centre of the header bar — no internet required, it reads the computer's system clock.
+## During the exam
+
+### 1. Put it on the projector
+
+Click **Present** or press `P`. The screen goes dark, the editing tools disappear, and the timer works out the biggest digit size it can for your screen. It tries full screen and stops the laptop from going to sleep while it's showing.
+
+In this view the size buttons in the header change the **name size** only. The digits always stay as big as they can be.
+
+Press `P` or `Esc` to go back.
+
+### 2. Reading time
+
+Pick 5, 10 or 15 minutes from the menu next to **Reading time**, then click it or press `R`. It fills the whole screen. Use **Pause** or **Skip** on the overlay if you need to.
+
+### 3. Start
+
+Click **Start all** or press `Space` when writing begins. To start one exam on its own, use the play button on its card.
+
+### 4. Lock it
+
+Click **Lock** once everything is running. That hides the editing controls and turns off `Space`, `P` and `R`, so nobody can pause the hall by bumping the keyboard. Click **Lock** again to unlock.
 
 ---
 
-### 12. Custom Timer Colours
-Each timer card can be given one of six colours so different papers are visually distinct at a glance.
+## What students see
 
-**How to use:**
-1. Click the ⚙ gear icon on the timer
-2. Click one of the six colour dots that appear below the name
+| Card shows | Meaning |
+|---|---|
+| Plain digits, **RUNNING** | Counting down |
+| **READY** | Set up, not started yet |
+| Dimmed, striped, **PAUSED** | Stopped part-way |
+| Amber, **FINAL 30 MIN** | 30 minutes or less left |
+| Red, **FINAL 5 MIN** | 5 minutes or less left |
+| Dark red, **TIME UP** | Finished |
 
-Colours persist when the session is saved — loading a saved session restores the correct colour for each timer.
+Every state has a text label as well as a colour, so it works for colour-blind students too. Nothing flashes, because the rest of the room may still be writing.
 
----
-
-## Timer States at a Glance
-
-| Display colour | Meaning |
-|---------------|---------|
-| White | Timer is counting down normally |
-| Green | Less than 30 minutes remaining |
-| Orange (flashing) | Time is up |
+The real time of day is always shown in the header.
 
 ---
 
-## Tips for Exam Day
+## When an exam finishes
 
-- **Save sessions the night before** so you arrive and click one button to load the full day's schedule
-- **Presentation Mode + Hall size** is the recommended hall setup: active timers fill the screen and editing controls are hidden
-- Use **Visibility Check** from the back of the room before students enter
-- Use **Lock** once timers are prepared to reduce accidental edits
-- If two rooms run the same paper, use **Duplicate** then rename one — takes 5 seconds
-- The **?** shortcut key is useful if you forget a keyboard shortcut mid-exam
+By default a finished exam disappears 30 seconds after time is up, and the other cards grow to fill the space.
+
+Turn on **Keep finished exams** to move them to a shelf at the bottom instead, so you can see which papers have ended.
+
+Deleted an exam by mistake? Click **Undo delete** straight away.
+
+---
+
+## Card size (setup view)
+
+Use **Card size** above the exam list: **Fit more**, **Balanced**, **Projector** or **Large**, or the **-** / **+** buttons. `Ctrl` + mouse wheel works too.
+
+---
+
+## Keyboard shortcuts
+
+| Key | Does |
+|---|---|
+| `Space` | Start or pause all exams |
+| `P` | Present on / off |
+| `R` | Start reading time |
+| `Ctrl +` / `Ctrl -` | Bigger / smaller (names only in Present) |
+| `Ctrl 0` | Reset size |
+| `Esc` | Close a dialog, or leave Present |
+| `?` | Open or close the help guide |
+
+Shortcuts don't fire while you're typing in a box. `Space`, `P` and `R` do nothing while the timer is locked.
+
+---
+
+## Tips for exam day
+
+- Save sessions the night before.
+- Present and check the screen from the back row before students come in.
+- Lock as soon as the exams start.
+- Keep a normal wall clock in the room. Exam board rules (JCQ in the UK) need a clock showing the actual time, and a countdown doesn't count as that clock.
+- The timer works with no internet connection. Your exams are saved on this computer. Use **Back up** if you want a copy.

@@ -4,7 +4,7 @@
   "description": "Desktop exam timer application.",
   "main": "main.js",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "start": "electron .",
     "tauri": "tauri",

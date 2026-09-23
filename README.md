@@ -101,7 +101,7 @@ Finished exams disappear 30 seconds after time is up and the rest of the cards g
 | `Ctrl +` / `Ctrl -` | Card size (in the hall view: name size) |
 | `Ctrl 0` | Reset size |
 | `Esc` | Close dialogs, or leave the hall view |
-| `?` | Show or hide the shortcut list |
+| `?` | Open or close the help guide |
 
 `Space`, `P` and `R` do nothing while the controls are locked.
 
@@ -154,6 +154,8 @@ docs/                plans and README images
 
 ## Licence
 
-There's no open-source licence on this yet, so all rights are reserved by default. If you'd like to use it at your school, open an issue and ask.
+MIT. See [LICENSE](LICENSE). Use it at your school, change it, share it.
+
+The bundled fonts are under the SIL Open Font License and anime.js is MIT.
 
 Built by [@Atzdude](https://github.com/Atzdude).
