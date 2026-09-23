@@ -6,7 +6,7 @@ const vm = require('node:vm');
 
 const ROOT = path.resolve(__dirname, '..');
 const HTML_PATH = path.join(ROOT, 'app', 'index.html');
-const TIMER_KEY = 'naisula_exam_timers';
+const TIMER_KEY = 'exam_timer_timers';
 
 const REQUIRED_IDS = [
   'liveClockTime',
@@ -481,7 +481,7 @@ function createHarness({ now = 1_000_000, storage = {} } = {}) {
   context.window.Date = FakeDate;
 
   const apiExport = `
-    window.__naisulaTimerTestApi = {
+    window.__examTimerTestApi = {
       createTimer,
       startTimer,
       pauseTimer,
@@ -510,16 +510,17 @@ function createHarness({ now = 1_000_000, storage = {} } = {}) {
       getTimers: () => timers,
       setTimers: (nextTimers) => { timers = nextTimers; },
       exportAllData,
-      importAllData
+      importAllData,
+      migrateLegacyStorage
     };
   `;
 
   vm.createContext(context);
   vm.runInContext(extractInlineScript() + apiExport, context, { filename: HTML_PATH });
-  context.window.__naisulaTimerTestApi.persistentStore.init();
+  context.window.__examTimerTestApi.persistentStore.init();
 
   return {
-    api: context.window.__naisulaTimerTestApi,
+    api: context.window.__examTimerTestApi,
     document,
     localStorage,
     intervals,
@@ -855,7 +856,7 @@ test('Keep Done shows completed timers as a steady TIME UP card for seven second
   const harness = createHarness({
     now: 100_000,
     storage: {
-      naisula_keep_done: 'true'
+      exam_timer_keep_done: 'true'
     }
   });
   harness.api.initKeepDone();
@@ -962,7 +963,7 @@ test('Ctrl plus and minus zoom the timer display and persist the preference', { 
   assert.equal(prevented, true);
   assert.equal(harness.api.getTimerZoom(), 1.05);
   assert.match(grid.style.properties['--current-timer-size'], /4\.0?rem|3\.99rem/);
-  assert.equal(JSON.parse(harness.localStorage.getItem('naisula_timer_zoom')), 1.05);
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_zoom')), 1.05);
 
   harness.document.dispatchEvent({
     type: 'keydown',
@@ -1008,7 +1009,7 @@ test('Ctrl zero resets timer zoom', { skip: 'ResizeObserver/DOM layout not avail
   });
 
   assert.equal(harness.api.getTimerZoom(), 1);
-  assert.equal(JSON.parse(harness.localStorage.getItem('naisula_timer_zoom')), 1);
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_zoom')), 1);
 });
 
 test('visible size preset control applies hall and classroom timer sizing', () => {
@@ -1021,7 +1022,7 @@ test('visible size preset control applies hall and classroom timer sizing', () =
 
   assert.equal(harness.api.getTimerSizePreset(), 'hall');
   assert.equal(harness.api.getTimerZoom(), 1.12);
-  assert.equal(JSON.parse(harness.localStorage.getItem('naisula_timer_size_preset')), 'hall');
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_size_preset')), 'hall');
 
   harness.document.getElementById('zoomResetBtn').eventListeners.click[0]();
   assert.equal(harness.api.getTimerSizePreset(), 'classroom');
@@ -1039,7 +1040,7 @@ test('control lock hides and blocks editing controls while leaving timers intact
 
   assert.equal(harness.document.body.classList.contains('controls-locked'), true);
   assert.equal(box.classList.contains('editing'), false);
-  assert.equal(JSON.parse(harness.localStorage.getItem('naisula_controls_locked')), true);
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_controls_locked')), true);
 });
 
 test('individual delete is confirm-gated and immediately undoable', () => {
@@ -1101,7 +1102,7 @@ test('reading time duration preset starts the selected duration', () => {
   harness.document.getElementById('readingTimeBtn').eventListeners.click[0]();
 
   assert.equal(harness.document.getElementById('readingTimeDisplay').textContent, '15:00');
-  assert.equal(JSON.parse(harness.localStorage.getItem('naisula_reading_duration')), 900);
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_reading_duration')), 900);
 });
 
 test('projector calibration overlay opens and closes without touching timers', { skip: 'ResizeObserver/DOM layout not available in vm context' }, () => {
@@ -1117,7 +1118,7 @@ test('projector calibration overlay opens and closes without touching timers', {
   assert.equal(overlay.classList.contains('active'), false);
 });
 
-test('export collects all naisula_* keys into a single JSON blob', () => {
+test('export collects all stored keys into a single JSON blob', () => {
   const harness = createHarness({ now: 100_000 });
   harness.api.createTimer('Math', 3600, 201, false, 'navy');
   harness.api.persistentStore.set(harness.api.STORAGE_KEYS.title, 'Hall A');
@@ -1125,13 +1126,13 @@ test('export collects all naisula_* keys into a single JSON blob', () => {
 
   const blob = JSON.parse(harness.api.exportAllData());
 
-  assert.equal(blob.schema, 'naisula-timer-v1');
+  assert.equal(blob.schema, 'exam-timer-v1');
   assert.equal(blob.data[harness.api.STORAGE_KEYS.title], 'Hall A');
   assert.equal(blob.data[harness.api.STORAGE_KEYS.durations][0].label, 'IB P2');
   assert.ok(Array.isArray(blob.data[harness.api.STORAGE_KEYS.timers]));
 });
 
-test('import replaces all naisula_* keys and reloads timers', () => {
+test('import restores a backup made before the key rename', () => {
   const harness = createHarness({ now: 200_000 });
   const blob = JSON.stringify({
     schema: 'naisula-timer-v1',
@@ -1150,13 +1151,47 @@ test('import replaces all naisula_* keys and reloads timers', () => {
   const result = harness.api.importAllData(blob);
 
   assert.equal(result.ok, true);
-  assert.equal(harness.api.persistentStore.get('naisula_exam_title', null), 'Imported Hall');
+  assert.equal(harness.api.persistentStore.get('exam_timer_title', null), 'Imported Hall');
   // The page reloads to apply the backup. Until then, the on-screen timers must not be
   // written back over the imported ones (or merged into duplicates) by the heartbeat/unload save.
   harness.api.saveTimers();
-  const storedTimers = harness.api.persistentStore.get('naisula_exam_timers', []);
+  const storedTimers = harness.api.persistentStore.get('exam_timer_timers', []);
   assert.equal(storedTimers.length, 1);
   assert.equal(storedTimers[0].name, 'Imported Paper');
+});
+
+test('export then import round-trips with the current schema', () => {
+  const source = createHarness({ now: 300_000 });
+  source.api.persistentStore.set(source.api.STORAGE_KEYS.title, 'Hall B');
+  source.api.createTimer('Chemistry', 1800, 301, false, 'teal');
+  const blob = source.api.exportAllData();
+
+  const target = createHarness({ now: 300_000 });
+  assert.equal(target.api.importAllData(blob).ok, true);
+  assert.equal(target.api.persistentStore.get('exam_timer_title', null), 'Hall B');
+  assert.equal(target.api.persistentStore.get('exam_timer_timers', [])[0].name, 'Chemistry');
+});
+
+test('startup moves data saved under the old key names to the new ones', () => {
+  const harness = createHarness({
+    storage: {
+      naisula_exam_title: JSON.stringify('Old Hall'),
+      naisula_exam_sessions: JSON.stringify([{ name: 'Mock', timers: [] }]),
+      naisula_timer_zoom: JSON.stringify(1.1),
+      naisula_keep_done: 'true',
+      exam_timer_keep_done: 'false'
+    }
+  });
+  harness.api.migrateLegacyStorage();
+
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_title')), 'Old Hall');
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_sessions'))[0].name, 'Mock');
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_zoom')), 1.1);
+  // A value already saved under the new name is kept.
+  assert.equal(JSON.parse(harness.localStorage.getItem('exam_timer_keep_done')), false);
+  for (const key of ['naisula_exam_title', 'naisula_exam_sessions', 'naisula_timer_zoom', 'naisula_keep_done']) {
+    assert.equal(harness.localStorage.getItem(key), null, key + ' should be removed');
+  }
 });
 
 test('import rejects unknown schema versions', () => {

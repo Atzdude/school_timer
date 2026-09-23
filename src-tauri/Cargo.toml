@@ -1,8 +1,8 @@
 [package]
 name = "timer"
 version = "1.4.0"
-description = "Naisula exam timer — Tauri shell"
-authors = ["Naisula School"]
+description = "Exam timer - Tauri shell"
+authors = ["Atzdude"]
 edition = "2021"
 license = "MIT"
 

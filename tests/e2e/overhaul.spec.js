@@ -173,7 +173,7 @@ test.describe('Hall view on a 720p projector', () => {
 test.describe('Sessions', () => {
   test('deleting a session removes the one clicked even with duplicate names', async ({ page }) => {
     await page.evaluate(() => {
-      localStorage.setItem('naisula_exam_sessions', JSON.stringify([
+      localStorage.setItem('exam_timer_sessions', JSON.stringify([
         { name: 'Mock', timers: [{ name: 'A', duration: 60 }] },
         { name: 'Mock', timers: [{ name: 'B', duration: 60 }, { name: 'C', duration: 60 }] }
       ]));
@@ -181,7 +181,7 @@ test.describe('Sessions', () => {
     });
     await page.locator('.session-chip-del').nth(1).click();
     await page.locator('#confirmModalOk').click();
-    const remaining = await page.evaluate(() => JSON.parse(localStorage.getItem('naisula_exam_sessions')));
+    const remaining = await page.evaluate(() => JSON.parse(localStorage.getItem('exam_timer_sessions')));
     expect(remaining).toHaveLength(1);
     expect(remaining[0].timers[0].name).toBe('A');
   });

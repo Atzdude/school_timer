@@ -4,7 +4,7 @@
 
 1. Open your old (Electron) timer app on the school machine.
 2. Click **Export** in the top-right of the header.
-3. Save the `naisula-timer-backup-*.json` file somewhere safe (Desktop, USB stick, OneDrive).
+3. Save the backup file (`exam-timer-backup-*.json`, or `naisula-timer-backup-*.json` from older versions) somewhere safe (Desktop, USB stick, OneDrive).
 
 ## Uninstall / remove the old app
 

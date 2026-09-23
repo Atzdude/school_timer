@@ -1,4 +1,4 @@
-# PROJECT: Naisula School Exam Timer - Windows App Packaging
+# PROJECT: Exam Timer - Windows App Packaging
 
 ## Goal
 
@@ -10,14 +10,12 @@ Package `timer_fixed_v2.html` as a standalone Windows desktop app for offline sc
 - `main.js` is the Electron main process and loads `timer_fixed_v2.html`.
 - `electron-builder` is configured in `package.json`.
 - Windows targets are configured as `x64` NSIS installer and `x64` portable EXE.
-- `naisula_logo.jpg` is present and included in the packaged files list.
 - `npm install` has been run locally and produced `package-lock.json`.
 
 ## Key Files
 
 - `timer_fixed_v2.html` - the full timer app.
 - `main.js` - Electron wrapper.
-- `naisula_logo.jpg` - bundled school logo.
 - `build/icon.ico` - Windows app icon generated from the supplied clock image.
 - `package.json` - scripts, Electron dependencies, and build settings.
 - `tests/timer_deadline.test.js` - dependency-free Node test suite for timer parsing, IDs, presentation-mode done shelf visibility, long-title header layout, icon-only presentation controls, Keep Done timing, keyboard shortcuts, persistence, and clock recovery.
@@ -65,7 +63,7 @@ Important `package.json` settings:
 - `productName`: `timer`
 - `appId`: `com.naisula.examtimer`
 - `asar`: `true`
-- bundled files: `main.js`, `timer_fixed_v2.html`, `naisula_logo.jpg`, `build/icon.ico`, `package.json`
+- bundled files: `main.js`, `timer_fixed_v2.html`, `build/icon.ico`, `package.json`
 - Windows icon: `build/icon.ico`
 - Packaged app name intentionally uses `timer` to avoid conflicting with existing school desktop items.
 - Windows targets: `nsis` and `portable`
@@ -130,6 +128,5 @@ Use this after launching the app with `npm start` or after packaging:
 
 ## Offline Notes
 
-- The logo is available locally as `naisula_logo.jpg`.
 - Google Fonts are still loaded from the CDN, but CSS includes local/system fallbacks.
 - For fully identical offline typography, bundle local font files and update CSS `@font-face` rules before final shipment.

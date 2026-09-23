@@ -2119,6 +2119,21 @@
 
         // ==================== PERSISTENT STORAGE ====================
         const STORAGE_KEYS = {
+            durations: 'exam_timer_durations',
+            title: 'exam_timer_title',
+            timers: 'exam_timer_timers',
+            sessions: 'exam_timer_sessions',
+            keepDone: 'exam_timer_keep_done',
+            timerZoom: 'exam_timer_zoom',
+            timerSizePreset: 'exam_timer_size_preset',
+            controlsLocked: 'exam_timer_controls_locked',
+            soundAlerts: 'exam_timer_sound_alerts',
+            readingDuration: 'exam_timer_reading_duration'
+        };
+
+        // Key names used before the rename. Existing data is moved across on startup, and old
+        // backup files that still use these names can be restored.
+        const LEGACY_STORAGE_KEYS = {
             durations: 'naisula_exam_durations',
             title: 'naisula_exam_title',
             timers: 'naisula_exam_timers',
@@ -2130,6 +2145,8 @@
             soundAlerts: 'naisula_sound_alerts',
             readingDuration: 'naisula_reading_duration'
         };
+        const BACKUP_SCHEMA = 'exam-timer-v1';
+        const LEGACY_BACKUP_SCHEMA = 'naisula-timer-v1';
 
         const storageStatus = document.getElementById('storageStatus');
         const clockStatus = document.getElementById('clockStatus');
@@ -2216,7 +2233,7 @@
 
             testLocalStorage() {
                 try {
-                    const testKey = '__naisula_storage_test__';
+                    const testKey = '__exam_timer_storage_test__';
                     window.localStorage.setItem(testKey, '1');
                     const ok = window.localStorage.getItem(testKey) === '1';
                     window.localStorage.removeItem(testKey);
@@ -2228,7 +2245,7 @@
 
             testCookies() {
                 try {
-                    const testKey = '__naisula_cookie_test__';
+                    const testKey = '__exam_timer_cookie_test__';
                     document.cookie = testKey + '=1; max-age=60; path=/; SameSite=Lax';
                     const ok = document.cookie.indexOf(testKey + '=1') !== -1;
                     document.cookie = testKey + '=; max-age=0; path=/; SameSite=Lax';
@@ -2302,6 +2319,21 @@
             }
         };
 
+        // Moves data saved under the old key names to the new ones. A value already stored under
+        // the new name wins; the old key is only removed once its value has been saved.
+        function migrateLegacyStorage() {
+            if (!persistentStore.persistent) return;
+            const missing = {};
+            for (const [name, legacyKey] of Object.entries(LEGACY_STORAGE_KEYS)) {
+                const legacyValue = persistentStore.get(legacyKey, missing);
+                if (legacyValue === missing) continue;
+                const currentValue = persistentStore.get(STORAGE_KEYS[name], missing);
+                if (currentValue !== missing || persistentStore.set(STORAGE_KEYS[name], legacyValue)) {
+                    persistentStore.remove(legacyKey);
+                }
+            }
+        }
+
         function exportAllData() {
             saveTimers();
             const data = {};
@@ -2310,7 +2342,7 @@
                 if (value !== null) data[key] = value;
             }
             return JSON.stringify({
-                schema: 'naisula-timer-v1',
+                schema: BACKUP_SCHEMA,
                 exportedAt: Date.now(),
                 data
             }, null, 2);
@@ -2322,15 +2354,16 @@
             let parsed;
             try { parsed = JSON.parse(jsonText); }
             catch (e) { return { ok: false, error: 'This file is not a valid backup (it is not JSON).' }; }
-            if (!parsed || parsed.schema !== 'naisula-timer-v1') {
-                return { ok: false, error: 'This file is not a timer backup (unrecognised schema, expected naisula-timer-v1).' };
+            if (!parsed || (parsed.schema !== BACKUP_SCHEMA && parsed.schema !== LEGACY_BACKUP_SCHEMA)) {
+                return { ok: false, error: 'This file is not a timer backup (unrecognised schema, expected ' + BACKUP_SCHEMA + ').' };
             }
             const data = parsed.data || {};
-            const knownKeys = Object.values(STORAGE_KEYS);
             suspendSaving = true;
-            for (const [key, value] of Object.entries(data)) {
-                if (!knownKeys.includes(key)) continue;
-                persistentStore.set(key, value);
+            for (const name of Object.keys(STORAGE_KEYS)) {
+                const key = Object.prototype.hasOwnProperty.call(data, STORAGE_KEYS[name])
+                    ? STORAGE_KEYS[name] : LEGACY_STORAGE_KEYS[name];
+                if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
+                persistentStore.set(STORAGE_KEYS[name], data[key]);
             }
             return { ok: true };
         }
@@ -4340,7 +4373,7 @@
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-            a.download = `naisula-timer-backup-${stamp}.json`;
+            a.download = `exam-timer-backup-${stamp}.json`;
             document.body.appendChild(a);
             a.click();
             setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
@@ -4489,6 +4522,7 @@
         // ==================== INITIALIZE ====================
         document.addEventListener('DOMContentLoaded', () => {
             persistentStore.init();
+            migrateLegacyStorage();
             if (!persistentStore.persistent) showStorageStatus(persistentStore.warning, true);
             else hideStorageStatus();
             initKeepDone();
